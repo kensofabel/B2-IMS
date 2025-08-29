@@ -3,8 +3,44 @@
 class POSSystem {
     constructor() {
         this.currentSection = 'dashboard';
+        this.cart = []; // Initialize cart array
         this.initializeEventListeners();
         this.checkAuthentication();
+        this.disableZoom();
+    }
+
+    disableZoom() {
+        // Prevent zooming using various methods
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent pinch zoom on touch devices
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent double-tap zoom
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+
+        // Disable browser zoom shortcuts
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey === true || e.metaKey === true) && 
+                (e.key === '+' || e.key === '-' || e.key === '=' || e.keyCode === 187 || e.keyCode === 189)) {
+                e.preventDefault();
+            }
+        });
     }
 
     initializeEventListeners() {
@@ -15,7 +51,6 @@ class POSSystem {
         }
         // Login form
         const loginForm = document.getElementById('loginForm');
-        console.log('Login form found and event listener attached'); // Log to confirm listener setup
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => this.handleLogin(e));
         }
@@ -48,22 +83,24 @@ class POSSystem {
         }
     }
 
-    handleLogin(e) {
+    async handleLogin(e) {
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const errorMessage = document.getElementById('errorMessage');
 
-        console.log('Attempting login with:', username, password); // Debug log
-        const isAuthenticated = dataManager.authenticate(username, password);
-        console.log('Authentication result:', isAuthenticated); // Log the result of authentication
-        if (isAuthenticated) {
-            localStorage.setItem('isLoggedIn', 'true');
-            console.log('Login successful, redirecting to dashboard...'); // Debug log
-            window.location.href = 'dashboard.html';
-        } else {
-            errorMessage.textContent = 'Invalid username or password';
-            this.showToast('Invalid credentials', 'error');
+        try {
+            const isAuthenticated = await dataManager.authenticate(username, password);
+            if (isAuthenticated) {
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'dashboard.html';
+            } else {
+                errorMessage.textContent = 'Invalid username or password';
+                this.showToast('Invalid credentials', 'error');
+            }
+        } catch (error) {
+            errorMessage.textContent = 'Authentication error occurred';
+            this.showToast('Authentication error', 'error');
         }
     }
 
@@ -114,6 +151,25 @@ class POSSystem {
         this.loadProductsForPOS();
     }
 
+    searchProductsForPOS(e) {
+        const query = e.target.value.toLowerCase();
+        const products = dataManager.getProducts();
+        const productGrid = document.getElementById('product-grid');
+        
+        const filteredProducts = products.filter(product =>
+            product.name.toLowerCase().includes(query) ||
+            product.category.toLowerCase().includes(query)
+        );
+        
+        productGrid.innerHTML = filteredProducts.map(product => `
+            <div class="product-item" onclick="addToCart(${product.id})">
+                <h4>${product.name}</h4>
+                <p>Price: $${product.price.toFixed(2)}</p>
+                <p>Stock: ${product.stock}</p>
+            </div>
+        `).join('');
+    }
+
     loadProductsForPOS() {
         const products = dataManager.getProducts();
         const productGrid = document.getElementById('product-grid');
@@ -122,6 +178,7 @@ class POSSystem {
             <div class="product-item" onclick="addToCart(${product.id})">
                 <h4>${product.name}</h4>
                 <p>Price: $${product.price.toFixed(2)}</p>
+                <p>Stock: ${product.stock}</p>
             </div>
         `).join('');
     }
@@ -267,12 +324,40 @@ class POSSystem {
         e.preventDefault();
         const formData = new FormData(e.target);
         
+        // Input validation
+        const name = formData.get('name').trim();
+        const category = formData.get('category');
+        const price = parseFloat(formData.get('price'));
+        const stock = parseInt(formData.get('stock'));
+        const description = formData.get('description').trim();
+
+        // Validate required fields
+        if (!name) {
+            this.showToast('Product name is required', 'error');
+            return;
+        }
+
+        if (!category) {
+            this.showToast('Category is required', 'error');
+            return;
+        }
+
+        if (isNaN(price) || price <= 0) {
+            this.showToast('Price must be a positive number', 'error');
+            return;
+        }
+
+        if (isNaN(stock) || stock < 0) {
+            this.showToast('Stock must be a non-negative number', 'error');
+            return;
+        }
+
         const product = {
-            name: formData.get('name'),
-            category: formData.get('category'),
-            price: parseFloat(formData.get('price')),
-            stock: parseInt(formData.get('stock')),
-            description: formData.get('description')
+            name,
+            category,
+            price,
+            stock,
+            description
         };
 
         try {
@@ -296,10 +381,30 @@ class POSSystem {
             const newStock = prompt('Enter new stock quantity:', product.stock);
             
             if (newName && newPrice && newStock) {
+                // Input validation
+                const name = newName.trim();
+                const price = parseFloat(newPrice);
+                const stock = parseInt(newStock);
+                
+                if (!name) {
+                    this.showToast('Product name is required', 'error');
+                    return;
+                }
+                
+                if (isNaN(price) || price <= 0) {
+                    this.showToast('Price must be a positive number', 'error');
+                    return;
+                }
+                
+                if (isNaN(stock) || stock < 0) {
+                    this.showToast('Stock must be a non-negative number', 'error');
+                    return;
+                }
+                
                 const updates = {
-                    name: newName,
-                    price: parseFloat(newPrice),
-                    stock: parseInt(newStock)
+                    name,
+                    price,
+                    stock
                 };
                 
                 dataManager.updateProduct(id, updates);
@@ -352,13 +457,10 @@ class POSSystem {
     showToast(message, type = 'info') {
         // Remove existing toasts
         document.querySelectorAll('.toast').forEach(toast => toast.remove());
-        
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.textContent = message;
-        
         document.body.appendChild(toast);
-        
         // Auto remove after 3 seconds
         setTimeout(() => {
             toast.remove();
@@ -383,4 +485,9 @@ if (window.location.pathname.endsWith('dashboard.html')) {
     document.addEventListener('DOMContentLoaded', () => {
         posSystem.showSection('dashboard');
     });
+}
+
+// Global function for HTML onclick handlers
+function addToCart(productId) {
+    posSystem.addToCart(productId);
 }
