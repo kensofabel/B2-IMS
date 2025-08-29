@@ -26,6 +26,25 @@ body::before {
     z-index: -1;
 }
 
+.background-animated {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+    /* Example: animated gradient */
+    background: linear-gradient(270deg, rgba(60,60,60,0.35), rgba(30,30,30,0.25), rgba(0,0,0,0.45), rgba(100,100,100,0.25));
+    background-size: 600% 600%;
+    animation: gradientMove 75s ease infinite;
+}
+@keyframes gradientMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
 /* Login Page Styles */
 .login-container {
     display: flex;
@@ -46,6 +65,8 @@ body::before {
     animation: slideUpFadeIn 0.8s ease-out;
     transform-origin: center;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
 
 .login-card:hover {
@@ -116,7 +137,7 @@ body::before {
 .login-btn {
     width: 100%;
     padding: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
     color: white;
     border: none;
     border-radius: 10px;
