@@ -1,0 +1,33 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Inventory Management System</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <h1>Welcome</h1>
+                    <p>Black Basket</p>
+                </div>
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required placeholder="Enter admin username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+                <div id="errorMessage" class="error-message"></div>
+            </div>
+        </div>
+        <script src="data.js"></script>
+        <script src="script.js"></script>
+    </body>
+    </html>
