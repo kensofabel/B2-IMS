@@ -491,3 +491,17 @@ if (window.location.pathname.endsWith('dashboard.html')) {
 function addToCart(productId) {
     posSystem.addToCart(productId);
 }
+
+// Password toggle function for login page
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.querySelector('.password-toggle');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('slashed');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.add('slashed');
+    }
+}
