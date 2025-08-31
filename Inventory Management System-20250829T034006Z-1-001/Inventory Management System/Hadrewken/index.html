@@ -12,20 +12,29 @@
             <div class="background-animated"></div>
             <div class="login-card">
                 <div class="login-header">
-                    <h1>Welcome</h1>
-                    <p>Black Basket</p>
+                    <img class="logo" src="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/df3a0c5c-88e6-43fe-b0a1-6107f98d72b9_removalai_preview%20(1).png?raw=true" alt="Black Basket Logo">
                 </div>
                 <form id="loginForm" class="login-form">
                     <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required placeholder="Enter admin username">
+                        <input type="text" id="username" name="username" required>
+                        <label for="username">Username or email</label>
                     </div>
                     <div class="form-group">
+                        <input type="password" id="password" name="password" required>
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required placeholder="Enter password">
+                        <span class="password-toggle slashed" onclick="togglePassword()">👁️</span>
                     </div>
-                    <button type="submit" class="login-btn">Login</button>
+                    <button type="submit" class="login-btn">Log in</button>
+                    
+                    <div class="login-links">
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
                 </form>
+                
+                <div class="signup-section">
+                    <p>Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+                </div>
+                
                 <div id="errorMessage" class="error-message"></div>
             </div>
         </div>
