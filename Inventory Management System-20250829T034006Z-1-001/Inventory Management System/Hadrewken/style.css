@@ -1,8 +1,111 @@
+/* Absolutely positioned dashboard logo, always forward */
+.dashboard-logo-absolute {
+    position: absolute;
+    top: 20px !important;
+    left: 80px !important;
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+    z-index: 9999 !important;
+    pointer-events: none;
+}
+@media (max-width: 600px) {
+    .dashboard-logo-absolute {
+        top: 10px;
+        left: 10px;
+        height: 36px;
+    }
+}
 /* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+/* Responsive main content when sidebar is collapsed */
+.sidebar.collapsed ~ .content-area,
+.dashboard-main .sidebar.collapsed ~ .content-area {
+    margin-left: 0 !important;
+    width: 100% !important;
+    transition: margin 0.3s, width 0.3s;
+}
+
+/* Sidebar default pushes content */
+.dashboard-main {
+    position: relative;
+}
+.sidebar {
+    position: relative;
+}
+.sidebar ~ .content-area {
+    margin-left: 20px;
+    width: calc(100% - 350px);
+    transition: margin 0.3s, width 0.3s;
+}
+
+@media (max-width: 900px) {
+    .sidebar ~ .content-area {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+/* Sidebar Toggle Button */
+.sidebar-toggle-btn {
+    position: absolute;
+    top: 28px;
+    left: 25px;
+    z-index: 1100;
+    background: #232323;
+    color: #ff9800;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: background 0.2s, color 0.2s;
+}
+.sidebar-toggle-btn:hover {
+    background: #ff9800;
+    color: #232323;
+}
+
+/* Collapsible Sidebar */
+.sidebar {
+    transition: transform 0.3s ease, box-shadow 0.3s;
+}
+.sidebar.collapsed {
+    transform: translateX(-100%);
+    box-shadow: none;
+}
+
+/* Hover to show sidebar on left edge */
+.sidebar-hover-zone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 100vh;
+    z-index: 1099;
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    .sidebar-toggle-btn {
+        top: 16px;
+        left: 40px;
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+    .sidebar-hover-zone {
+        width: 16px;
+    }
 }
 
 body {
@@ -333,11 +436,15 @@ body::before {
 
 .dashboard-header {
     background: transparent;
-    padding: 20px 40px;
+    padding: 40px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(34,34,34,0.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
 }
 
 .header-left h1 {
@@ -374,15 +481,17 @@ body::before {
 
 .dashboard-main {
     display: flex;
-    min-height: calc(100vh - 80px);
+    min-height: 100vh;
     background: transparent;
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .sidebar {
-    width: 250px;
-    background: #181818;
+    width: 350px;
+    background: #ff990048;
     box-shadow: 2px 0 10px rgba(0,0,0,0.4);
-    padding: 20px 0;
+    padding: 200px 0;
     border-right: 1px solid #232323;
 }
 
@@ -393,7 +502,8 @@ body::before {
 }
 
 .nav-item {
-    padding: 15px 25px;
+    padding: 15px;
+    padding-left: 90px;
     color: #dbdbdb;
     text-decoration: none;
     display: flex;
@@ -417,7 +527,8 @@ body::before {
 
 .content-area {
     flex: 1;
-    padding: 30px;
+    padding: 200px;
+    padding-left: 0px !important;
     overflow-y: auto;
     background: transparent;
 }
@@ -598,7 +709,7 @@ body::before {
 /* Tables */
 .inventory-table-container,
 .sales-table-container {
-    background: #232323;
+    background: #2a2a2a;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.25);
     overflow: hidden;
@@ -629,7 +740,7 @@ body::before {
 
 .inventory-table tr:hover,
 .sales-table tr:hover {
-    background: #f7fafc;
+    background: #2a2a2a;
 }
 
 /* Status Badges */
