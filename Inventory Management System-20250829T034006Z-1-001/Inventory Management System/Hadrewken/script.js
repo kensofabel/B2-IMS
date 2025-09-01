@@ -1,3 +1,61 @@
+    // Collapse sidebar when a nav item is clicked
+
+    function collapseSidebarOnNavClick() {
+        if (sidebar) {
+            sidebar.classList.add('collapsed');
+            sidebarManuallyOpened = false;
+        }
+    }
+
+    // Attach click event to all nav items inside the sidebar
+    document.addEventListener('DOMContentLoaded', function() {
+        const navItems = document.querySelectorAll('.sidebar .nav-item');
+        navItems.forEach(function(item) {
+            item.addEventListener('click', collapseSidebarOnNavClick);
+        });
+    });
+// Sidebar toggle logic
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarHoverZone = document.getElementById('sidebarHoverZone');
+    let sidebarTimeout;
+    let sidebarManuallyOpened = false;
+
+    // Always hide sidebar on page load
+    if (sidebar) {
+        sidebar.classList.add('collapsed');
+    }
+
+    function tryCollapseSidebar() {
+        // Only collapse if not manually opened and mouse is not over sidebar or hover zone
+        if (!sidebarManuallyOpened && !sidebar.matches(':hover') && !sidebarHoverZone.matches(':hover')) {
+            sidebar.classList.add('collapsed');
+        }
+    }
+
+    if (sidebar && sidebarToggle && sidebarHoverZone) {
+        sidebarToggle.addEventListener('click', () => {
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            sidebarManuallyOpened = !isCollapsed;
+        });
+
+        // Hover to show sidebar
+        sidebarHoverZone.addEventListener('mouseenter', () => {
+            clearTimeout(sidebarTimeout);
+            sidebar.classList.remove('collapsed');
+        });
+        sidebarHoverZone.addEventListener('mouseleave', () => {
+            sidebarTimeout = setTimeout(tryCollapseSidebar, 80);
+        });
+        sidebar.addEventListener('mouseleave', () => {
+            sidebarTimeout = setTimeout(tryCollapseSidebar, 80);
+        });
+        sidebar.addEventListener('mouseenter', () => {
+            clearTimeout(sidebarTimeout);
+        });
+    }
+});
 // Main JavaScript functionality for POS system
 
 class POSSystem {
