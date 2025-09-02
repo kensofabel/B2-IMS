@@ -23,7 +23,7 @@
                 <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
-            </div>
+            </div> 
         </header>
         <!-- Logo absolutely positioned, always forward -->
         <img class="dashboard-logo-absolute" src="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/Untitled_design__1_-removebg-preview.png?raw=true" alt="Dashboard Logo" style="position:absolute; top:10px; left:10px; z-index:100;">
@@ -44,6 +44,22 @@
                     <a href="#add-product" class="nav-item" onclick="showSection('add-product')">
                         <i class="fas fa-plus-circle"></i> Add Product
                     </a>
+                    <div class="nav-item dropdown">
+                        <a href="#report" class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
+                            <i class="fas fa-file-alt"></i> Report
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="#sales-report" class="dropdown-item" onclick="showSection('sales-report')">
+                                <i class="fas fa-chart-bar"></i> Sales Report
+                            </a>
+                            <a href="#inventory-reports" class="dropdown-item" onclick="showSection('inventory-reports')">
+                                <i class="fas fa-boxes"></i> Inventory Reports
+                            </a>
+                            <a href="#payment-reports" class="dropdown-item" onclick="showSection('payment-reports')">
+                                <i class="fas fa-credit-card"></i> Payment Reports
+                            </a>
+                        </div>
+                    </div>
                 </nav>
             </aside>
 
@@ -190,6 +206,39 @@
                                 <!-- Sales data will be populated by JavaScript -->
                             </tbody>
                         </table>
+                    </div>
+                </section>
+
+                <!-- Sales Report Section -->
+                <section id="sales-report-section" class="section">
+                    <div class="section-header">
+                        <h2>Sales Report</h2>
+                    </div>
+                    <div class="report-content">
+                        <p>Sales report content will be displayed here.</p>
+                        <!-- Add sales report specific content -->
+                    </div>
+                </section>
+
+                <!-- Inventory Reports Section -->
+                <section id="inventory-reports-section" class="section">
+                    <div class="section-header">
+                        <h2>Inventory Reports</h2>
+                    </div>
+                    <div class="report-content">
+                        <p>Inventory reports content will be displayed here.</p>
+                        <!-- Add inventory reports specific content -->
+                    </div>
+                </section>
+
+                <!-- Payment Reports Section -->
+                <section id="payment-reports-section" class="section">
+                    <div class="section-header">
+                        <h2>Payment Reports</h2>
+                    </div>
+                    <div class="report-content">
+                        <p>Payment reports content will be displayed here.</p>
+                        <!-- Add payment reports specific content -->
                     </div>
                 </section>
             </div>
