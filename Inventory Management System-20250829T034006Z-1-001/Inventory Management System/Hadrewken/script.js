@@ -554,7 +554,7 @@ function addToCart(productId) {
 function togglePassword() {
     const passwordInput = document.getElementById('password');
     const toggleIcon = document.querySelector('.password-toggle');
-    
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         toggleIcon.classList.remove('slashed');
@@ -563,3 +563,30 @@ function togglePassword() {
         toggleIcon.classList.add('slashed');
     }
 }
+
+// Dropdown toggle function
+function toggleDropdown(event) {
+    event.preventDefault();
+    event.stopPropagation(); // Prevent event bubbling to parent elements
+    const dropdown = event.target.closest('.dropdown');
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+
+    // Close all other dropdowns
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (menu !== dropdownMenu) {
+            menu.classList.remove('show');
+        }
+    });
+
+    // Toggle current dropdown
+    dropdownMenu.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+});
