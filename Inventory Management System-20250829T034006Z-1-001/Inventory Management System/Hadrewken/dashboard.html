@@ -9,9 +9,7 @@
     <link rel="icon" type="image/x-icon" href="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/Gemini_Generated_Image_lup4cylup4cylup4__1_-removebg-preview.png?raw=true">
 </head>
 <body>
-    <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Sidebar">
-        <i class="fas fa-bars"></i>
-    </button>
+
     <div class="sidebar-hover-zone" id="sidebarHoverZone"></div>
     <div class="dashboard-container">
         <!-- Header -->
@@ -35,48 +33,61 @@
                 <nav class="sidebar-nav">
                     <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
                         <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
                     <a href="#sales" class="nav-item" onclick="showSection('sales')">
-                        <i class="fas fa-shopping-cart"></i> Sales
+                        <i class="fas fa-cash-register"></i> POS
                     </a>
                     <a href="#inventory" class="nav-item" onclick="showSection('inventory')">
                         <i class="fas fa-boxes"></i> Inventory
                     </a>
-                    <a href="#add-product" class="nav-item" onclick="showSection('add-product')">
-                        <i class="fas fa-plus-circle"></i> Add Product
+                    <a href="#" class="nav-item has-submenu" onclick="toggleSidebarSubmenu(event, 'report-submenu')">
+                        <i class="fas fa-file-alt"></i> Report <i class="fas fa-caret-down submenu-caret"></i>
                     </a>
-                    <div class="nav-item dropdown">
-                        <a href="#report" class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
-                            <i class="fas fa-file-alt"></i> Report
+                    <div class="sidebar-submenu" id="report-submenu">
+                        <a href="#sales-report" class="nav-item submenu-item" onclick="showSection('sales-report')">
+                            <i class="fas fa-chart-bar"></i> Sales Report
                         </a>
-                        <div class="dropdown-menu">
-                            <a href="#sales-report" class="dropdown-item" onclick="showSection('sales-report')">
-                                <i class="fas fa-chart-bar"></i> Sales Report
-                            </a>
-                            <a href="#inventory-reports" class="dropdown-item" onclick="showSection('inventory-reports')">
-                                <i class="fas fa-boxes"></i> Inventory Reports
-                            </a>
-                            <a href="#payment-reports" class="dropdown-item" onclick="showSection('payment-reports')">
-                                <i class="fas fa-credit-card"></i> Payment Reports
-                            </a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#accounts" class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
-                            <i class="fas fa-users-cog"></i> Accounts
+                        <a href="#inventory-reports" class="nav-item submenu-item" onclick="showSection('inventory-reports')">
+                            <i class="fas fa-boxes"></i> Inventory Reports
                         </a>
-                        <div class="dropdown-menu">
-                            <a href="#access-rights" class="dropdown-item" onclick="showSection('access-rights')">
-                                <i class="fas fa-shield-alt"></i> ACCESS RIGHTS
-                            </a>
-                            <a href="#employee" class="dropdown-item" onclick="showSection('employee')">
-                                <i class="fas fa-user-tie"></i> EMPLOYEE
-                            </a>
-                        </div>
+                        <a href="#payment-reports" class="nav-item submenu-item" onclick="showSection('payment-reports')">
+                            <i class="fas fa-credit-card"></i> Payment Reports
+                        </a>
                     </div>
+                    <a href="#" class="nav-item has-submenu" onclick="toggleSidebarSubmenu(event, 'accounts-submenu')">
+                        <i class="fas fa-users-cog"></i> Accounts <i class="fas fa-caret-down submenu-caret"></i>
+                    </a>
+                    <div class="sidebar-submenu" id="accounts-submenu">
+                        <a href="#access-rights" class="nav-item submenu-item" onclick="showSection('access-rights')">
+                            <i class="fas fa-shield-alt"></i> ACCESS RIGHTS
+                        </a>
+                        <a href="#employee" class="nav-item submenu-item" onclick="showSection('employee')">
+                            <i class="fas fa-user-tie"></i> EMPLOYEE
+                        </a>
+                    </div>
+<script>
+function toggleSidebarSubmenu(event, submenuId) {
+    event.preventDefault();
+    var submenu = document.getElementById(submenuId);
+    if (submenu) {
+        submenu.classList.toggle('open');
+    }
+    // Optionally close other submenus
+    document.querySelectorAll('.sidebar-submenu').forEach(function(el) {
+        if (el.id !== submenuId) el.classList.remove('open');
+    });
+}
+</script>
                     <a href="#audit-logs" class="nav-item" onclick="showSection('audit-logs')">
                         <i class="fas fa-history"></i> Audit Logs
                     </a>
                 </nav>
+                <a href="#add-product-form" class="nav-item" onclick="showSection('add-product')">
+                    <i class="fas fa-plus-circle"></i> Add Product
+                </a>
+                <a href="#settings" class="nav-item" style="margin-top:0;" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
             </aside>
 
             <!-- Content Area -->
@@ -414,71 +425,6 @@
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Employee Management Modal -->
-    <div id="employee-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Manage Employees</h2>
-                <span class="close" onclick="closeEmployeeModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="employee-actions">
-                    <button class="btn btn-primary" onclick="showAddEmployeeForm()">
-                        <i class="fas fa-user-plus"></i> Add New Employee
-                    </button>
-                </div>
-                <div id="employees-list" class="employees-list">
-                    <!-- Employees will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add/Edit Employee Form Modal -->
-    <div id="employee-form-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="employee-form-title">Add Employee</h2>
-                <span class="close" onclick="closeEmployeeFormModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="employee-form">
-                    <div class="form-group">
-                        <label for="employee-name">Full Name</label>
-                        <input type="text" id="employee-name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-email">Email</label>
-                        <input type="email" id="employee-email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-phone">Phone</label>
-                        <input type="tel" id="employee-phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-role">Role</label>
-                        <select id="employee-role" name="role" required>
-                            <option value="">Select Role</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Staff">Staff</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-status">Status</label>
-                        <select id="employee-status" name="status" required>
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Save Employee</button>
-                        <button type="button" class="btn btn-secondary" onclick="closeEmployeeFormModal()">Cancel</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
