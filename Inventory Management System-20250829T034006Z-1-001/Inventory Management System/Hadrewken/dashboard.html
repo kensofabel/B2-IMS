@@ -390,6 +390,34 @@
         </div>
     </div>
 
+    <!-- Permissions Management Modal -->
+    <div id="permissions-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Set Permissions</h2>
+                <span class="close" onclick="closePermissionsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="permissions-content">
+                    <div class="permissions-section">
+                        <h3>Role-Based Permissions</h3>
+                        <div id="permissions-list" class="permissions-list">
+                            <!-- Permissions will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="permissions-actions">
+                        <button class="btn btn-primary" onclick="savePermissions()">
+                            <i class="fas fa-save"></i> Save Permissions
+                        </button>
+                        <button class="btn btn-secondary" onclick="closePermissionsModal()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
