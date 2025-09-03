@@ -488,7 +488,7 @@ body::before {
 }
 
 .sidebar {
-    width: 350px;
+    width: 250px;
     background: #ff990048;
     box-shadow: 2px 0 10px rgba(0,0,0,0.4);
     padding: 200px 0;
@@ -1353,3 +1353,4 @@ body::before {
         width: 100%;
     }
 }
+
