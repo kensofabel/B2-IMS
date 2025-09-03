@@ -57,6 +57,20 @@ const INITIAL_PRODUCTS = [
     }
 ];
 
+// New initial roles data
+const INITIAL_ROLES = [
+    {
+        id: 1,
+        name: "Admin",
+        description: "Full access to all features"
+    },
+    {
+        id: 2,
+        name: "Staff",
+        description: "Limited access to sales and inventory"
+    }
+];
+
 const INITIAL_SALES = [
     {
         id: "T001",
@@ -95,6 +109,9 @@ class DataManager {
         }
         if (!localStorage.getItem('activities')) {
             localStorage.setItem('activities', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('roles')) {
+            localStorage.setItem('roles', JSON.stringify(INITIAL_ROLES));
         }
     }
 
@@ -143,6 +160,49 @@ class DataManager {
             
             // Add activity
             this.addActivity(`Deleted product: ${deletedProduct.name}`);
+            return true;
+        }
+        return false;
+    }
+
+    // Roles management
+    getRoles() {
+        return JSON.parse(localStorage.getItem('roles') || '[]');
+    }
+
+    addRole(role) {
+        const roles = this.getRoles();
+        const newRole = {
+            ...role,
+            id: Date.now()
+        };
+        roles.push(newRole);
+        localStorage.setItem('roles', JSON.stringify(roles));
+        this.addActivity(`Added role: ${role.name}`);
+        return newRole;
+    }
+
+    updateRole(id, updates) {
+        const roles = this.getRoles();
+        const index = roles.findIndex(r => r.id === id);
+        if (index !== -1) {
+            const oldRole = roles[index];
+            roles[index] = { ...oldRole, ...updates };
+            localStorage.setItem('roles', JSON.stringify(roles));
+            this.addActivity(`Updated role: ${oldRole.name}`);
+            return roles[index];
+        }
+        return null;
+    }
+
+    deleteRole(id) {
+        const roles = this.getRoles();
+        const index = roles.findIndex(r => r.id === id);
+        if (index !== -1) {
+            const deletedRole = roles[index];
+            roles.splice(index, 1);
+            localStorage.setItem('roles', JSON.stringify(roles));
+            this.addActivity(`Deleted role: ${deletedRole.name}`);
             return true;
         }
         return false;
