@@ -751,8 +751,118 @@ function handleRoleFormSubmit(e) {
 }
 
 function setPermissions() {
-    this.showToast('Set Permissions functionality coming soon!', 'info');
+    // Open a modal or section for setting permissions (basic implementation)
+    const modal = document.getElementById('permissions-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        loadPermissions();
+    } else {
+        alert('Permissions modal not found. Please add the modal HTML.');
+    }
 }
+
+// Close permissions modal
+function closePermissionsModal() {
+    const modal = document.getElementById('permissions-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Load permissions data
+function loadPermissions() {
+    const permissionsList = document.getElementById('permissions-list');
+    if (permissionsList) {
+        const permissions = dataManager.getPermissions();
+        const roles = dataManager.getRoles();
+
+        if (roles.length === 0) {
+            permissionsList.innerHTML = '<p>No roles available. Please create roles first.</p>';
+            return;
+        }
+
+        // Create permissions interface for each role
+        permissionsList.innerHTML = roles.map(role => {
+            const rolePermissions = dataManager.getPermissionsByRole(role.id);
+
+            return `
+                <div class="role-permissions">
+                    <h4>${role.name}</h4>
+                    <p class="role-description">${role.description}</p>
+                    <div class="permissions-grid">
+                        ${permissions.map(permission => `
+                            <div class="permission-item">
+                                <label class="permission-checkbox">
+                                    <input type="checkbox"
+                                           id="perm-${role.id}-${permission.id}"
+                                           data-role-id="${role.id}"
+                                           data-permission-id="${permission.id}"
+                                           ${rolePermissions.includes(permission.id) ? 'checked' : ''}>
+                                    <span class="checkmark"></span>
+                                    <div class="permission-info">
+                                        <strong>${permission.name}</strong>
+                                        <small>${permission.description}</small>
+                                    </div>
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+// Save permissions
+function savePermissions() {
+    const checkboxes = document.querySelectorAll('#permissions-list input[type="checkbox"]');
+    const rolePermissionsMap = {};
+
+    // Group permissions by role
+    checkboxes.forEach(checkbox => {
+        const roleId = parseInt(checkbox.getAttribute('data-role-id'));
+        const permissionId = parseInt(checkbox.getAttribute('data-permission-id'));
+
+        if (!rolePermissionsMap[roleId]) {
+            rolePermissionsMap[roleId] = [];
+        }
+
+        if (checkbox.checked) {
+            rolePermissionsMap[roleId].push(permissionId);
+        }
+    });
+
+    // Save permissions for each role
+    let successCount = 0;
+    for (const [roleId, permissionIds] of Object.entries(rolePermissionsMap)) {
+        const success = dataManager.updateRolePermissions(parseInt(roleId), permissionIds);
+        if (success) {
+            successCount++;
+        }
+    }
+
+    if (successCount === Object.keys(rolePermissionsMap).length) {
+        posSystem.showToast('Permissions updated successfully!', 'success');
+        closePermissionsModal();
+    } else {
+        posSystem.showToast('Error updating some permissions', 'error');
+    }
+}
+
+// Initialize permissions modal event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const permissionsModal = document.getElementById('permissions-modal');
+    if (permissionsModal) {
+        permissionsModal.querySelector('.close').addEventListener('click', closePermissionsModal);
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === permissionsModal) {
+            closePermissionsModal();
+        }
+    });
+});
 
 // Audit logs functions
 function loadAuditLogs() {
