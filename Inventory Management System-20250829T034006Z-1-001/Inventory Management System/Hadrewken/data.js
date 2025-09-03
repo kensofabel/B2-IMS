@@ -57,7 +57,7 @@ const INITIAL_PRODUCTS = [
     }
 ];
 
-// New initial roles data
+// New initial s data
 const INITIAL_ROLES = [
     {
         id: 1,
@@ -68,6 +68,143 @@ const INITIAL_ROLES = [
         id: 2,
         name: "Staff",
         description: "Limited access to sales and inventory"
+    }
+];
+
+// Initial permissions data
+const INITIAL_PERMISSIONS = [
+    {
+        id: 1,
+        name: "Dashboard Access",
+        description: "Access to dashboard and statistics",
+        module: "dashboard"
+    },
+    {
+        id: 2,
+        name: "Inventory Management",
+        description: "View and manage inventory",
+        module: "inventory"
+    },
+    {
+        id: 3,
+        name: "Add Products",
+        description: "Add new products to inventory",
+        module: "products"
+    },
+    {
+        id: 4,
+        name: "Edit Products",
+        description: "Edit existing products",
+        module: "products"
+    },
+    {
+        id: 5,
+        name: "Delete Products",
+        description: "Delete products from inventory",
+        module: "products"
+    },
+    {
+        id: 6,
+        name: "Sales Processing",
+        description: "Process sales transactions",
+        module: "sales"
+    },
+    {
+        id: 7,
+        name: "View Sales Reports",
+        description: "Access sales reports",
+        module: "reports"
+    },
+    {
+        id: 8,
+        name: "View Inventory Reports",
+        description: "Access inventory reports",
+        module: "reports"
+    },
+    {
+        id: 9,
+        name: "Manage Roles",
+        description: "Create and manage user roles",
+        module: "roles"
+    },
+    {
+        id: 10,
+        name: "Set Permissions",
+        description: "Assign permissions to roles",
+        module: "permissions"
+    },
+    {
+        id: 11,
+        name: "Employee Management",
+        description: "Manage employee accounts",
+        module: "employees"
+    },
+    {
+        id: 12,
+        name: "Audit Logs Access",
+        description: "View system audit logs",
+        module: "audit"
+    }
+];
+
+// Initial role-permissions mapping
+const INITIAL_ROLE_PERMISSIONS = [
+    {
+        roleId: 1, // Admin
+        permissionIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] // All permissions
+    },
+    {
+        roleId: 2, // Staff
+        permissionIds: [1, 2, 6, 7, 8] // Limited permissions
+    }
+];
+
+// Initial audit logs data
+const INITIAL_AUDIT_LOGS = [
+    {
+        id: 1,
+        timestamp: new Date('2024-01-15T09:00:00').toISOString(),
+        user: "admin",
+        action: "Login",
+        details: "User logged into the system",
+        type: "login",
+        ipAddress: "192.168.1.100"
+    },
+    {
+        id: 2,
+        timestamp: new Date('2024-01-15T09:15:00').toISOString(),
+        user: "admin",
+        action: "Add Product",
+        details: "Added new product: Apple",
+        type: "product",
+        ipAddress: "192.168.1.100"
+    },
+    {
+        id: 3,
+        timestamp: new Date('2024-01-15T10:30:00').toISOString(),
+        user: "staff1",
+        action: "Sale Transaction",
+        details: "Processed sale T001 for $9.47",
+        type: "sales",
+        ipAddress: "192.168.1.101"
+    },
+    {
+        id: 4,
+        timestamp: new Date('2024-01-15T14:45:00').toISOString(),
+        user: "staff2",
+        action: "Sale Transaction",
+        details: "Processed sale T002 for $20.47",
+        type: "sales",
+        ipAddress: "192.168.1.102"
+    },
+    {
+        id: 5,
+        timestamp: new Date('2024-01-15T16:00:00').toISOString(),
+        user: "admin",
+        action: "Update Product",
+        details: "Updated product: Bread stock from 10 to 5",
+        type: "inventory",
+        ipAddress: "192.168.1.100"
     }
 ];
 
@@ -112,6 +249,15 @@ class DataManager {
         }
         if (!localStorage.getItem('roles')) {
             localStorage.setItem('roles', JSON.stringify(INITIAL_ROLES));
+        }
+        if (!localStorage.getItem('permissions')) {
+            localStorage.setItem('permissions', JSON.stringify(INITIAL_PERMISSIONS));
+        }
+        if (!localStorage.getItem('rolePermissions')) {
+            localStorage.setItem('rolePermissions', JSON.stringify(INITIAL_ROLE_PERMISSIONS));
+        }
+        if (!localStorage.getItem('auditLogs')) {
+            localStorage.setItem('auditLogs', JSON.stringify(INITIAL_AUDIT_LOGS));
         }
     }
 
@@ -206,6 +352,37 @@ class DataManager {
             return true;
         }
         return false;
+    }
+
+    // Permissions management
+    getPermissions() {
+        return JSON.parse(localStorage.getItem('permissions') || '[]');
+    }
+
+    getRolePermissions() {
+        return JSON.parse(localStorage.getItem('rolePermissions') || '[]');
+    }
+
+    getPermissionsByRole(roleId) {
+        const rolePermissions = this.getRolePermissions();
+        const rolePermission = rolePermissions.find(rp => rp.roleId === roleId);
+        return rolePermission ? rolePermission.permissionIds : [];
+    }
+
+    updateRolePermissions(roleId, permissionIds) {
+        const rolePermissions = this.getRolePermissions();
+        const index = rolePermissions.findIndex(rp => rp.roleId === roleId);
+
+        if (index !== -1) {
+            rolePermissions[index].permissionIds = permissionIds;
+        } else {
+            rolePermissions.push({ roleId, permissionIds });
+        }
+
+        localStorage.setItem('rolePermissions', JSON.stringify(rolePermissions));
+        const role = this.getRoles().find(r => r.id === roleId);
+        this.addActivity(`Updated permissions for role: ${role ? role.name : 'Unknown'}`);
+        return true;
     }
 
     // Sales management
