@@ -73,6 +73,9 @@
                             </a>
                         </div>
                     </div>
+                    <a href="#audit-logs" class="nav-item" onclick="showSection('audit-logs')">
+                        <i class="fas fa-history"></i> Audit Logs
+                    </a>
                 </nav>
             </aside>
 
@@ -282,13 +285,59 @@
                     <div class="access-rights-content">
                         <p>Access rights management content will be displayed here.</p>
                         <!-- Add access rights management specific content -->
-                        <div class="a   ccess-rights-actions">
+                        <div class="access-rights-actions">
                             <button class="btn btn-edit" onclick="manageRoles()">
                                 <i class="fas fa-user-shield"></i> Manage Roles
                             </button>
                             <button class="btn btn-edit" onclick="setPermissions()">
                                 <i class="fas fa-key"></i> Set Permissions
                             </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Audit Logs Section -->
+                <section id="audit-logs-section" class="section">
+                    <div class="section-header">
+                        <h2>Audit Logs</h2>
+                        <div class="search-box">
+                            <input type="text" id="search-audit-logs" placeholder="Search audit logs...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <div class="audit-logs-content">
+                        <div class="audit-logs-filters">
+                            <select id="audit-log-filter">
+                                <option value="all">All Activities</option>
+                                <option value="login">Login/Logout</option>
+                                <option value="product">Product Changes</option>
+                                <option value="sales">Sales Transactions</option>
+                                <option value="inventory">Inventory Updates</option>
+                            </select>
+                            <input type="date" id="audit-log-date-from">
+                            <input type="date" id="audit-log-date-to">
+                            <button class="btn btn-primary" onclick="filterAuditLogs()">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                            <button class="btn btn-secondary" onclick="exportAuditLogs()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                        <div class="audit-logs-table-container">
+                            <table class="audit-logs-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>User</th>
+                                        <th>Action</th>
+                                        <th>Details</th>
+                                        <th>IP Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="audit-logs-table-body">
+                                    <!-- Audit logs will be populated by JavaScript -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
