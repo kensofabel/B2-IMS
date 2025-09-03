@@ -418,6 +418,71 @@
         </div>
     </div>
 
+    <!-- Employee Management Modal -->
+    <div id="employee-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage Employees</h2>
+                <span class="close" onclick="closeEmployeeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="employee-actions">
+                    <button class="btn btn-primary" onclick="showAddEmployeeForm()">
+                        <i class="fas fa-user-plus"></i> Add New Employee
+                    </button>
+                </div>
+                <div id="employees-list" class="employees-list">
+                    <!-- Employees will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Employee Form Modal -->
+    <div id="employee-form-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="employee-form-title">Add Employee</h2>
+                <span class="close" onclick="closeEmployeeFormModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="employee-form">
+                    <div class="form-group">
+                        <label for="employee-name">Full Name</label>
+                        <input type="text" id="employee-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-email">Email</label>
+                        <input type="email" id="employee-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-phone">Phone</label>
+                        <input type="tel" id="employee-phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-role">Role</label>
+                        <select id="employee-role" name="role" required>
+                            <option value="">Select Role</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-status">Status</label>
+                        <select id="employee-status" name="status" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Employee</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeEmployeeFormModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
