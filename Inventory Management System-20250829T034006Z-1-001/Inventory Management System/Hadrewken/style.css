@@ -488,7 +488,7 @@ body::before {
 }
 
 .sidebar {
-    width: 250px;
+    width: 350px;
     background: #ff990048;
     box-shadow: 2px 0 10px rgba(0,0,0,0.4);
     padding: 200px 0;
@@ -552,7 +552,7 @@ body::before {
     display: none;
     position: absolute;
     top: 100%;
-    left: 0;
+    left: -20px;
     background: #232323;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     border-radius: 0 0 8px 8px;
@@ -1298,59 +1298,13 @@ body::before {
     border-top: 1px solid #333;
 }
 
-/* Custom minimal scrollbar for permissions content */
-.permissions-content::-webkit-scrollbar {
-    width: 6px;
+/* Add Employee form select background colors */
+#employee-role {
+    background-color: #555;
+   
 }
 
-.permissions-content::-webkit-scrollbar-track {
-    background: transparent;
+#employee-status {
+    background-color: #555;
+   
 }
-
-.permissions-content::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 3px;
-    border: none;
-}
-
-.permissions-content::-webkit-scrollbar-thumb:hover {
-    background: #777;
-}
-
-.permissions-content {
-    scrollbar-width: thin;
-    scrollbar-color: #555 transparent;
-}
-
-/* Responsive Modal */
-@media (max-width: 768px) {
-    .modal-content {
-        width: 95%;
-        margin: 10% auto;
-    }
-
-    .modal-header {
-        padding: 15px 20px;
-    }
-
-    .modal-body {
-        padding: 20px;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .permissions-actions {
-        flex-direction: column;
-    }
-
-    .permissions-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .btn {
-        width: 100%;
-    }
-}
-
