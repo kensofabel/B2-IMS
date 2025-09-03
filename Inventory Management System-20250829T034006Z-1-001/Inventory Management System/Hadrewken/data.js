@@ -17,7 +17,7 @@ const ADMIN_CREDENTIALS = {
     password: "admin123" // In a real application, this would be hashed
 };
 
-// Sample initial data
+// zinitial data
 const INITIAL_PRODUCTS = [
     {
         id: 1,
@@ -159,6 +159,28 @@ const INITIAL_ROLE_PERMISSIONS = [
     }
 ];
 
+// Initial employees data
+const INITIAL_EMPLOYEES = [
+    {
+        id: 1,
+        name: "John Doe",
+        email: "john.doe@company.com",
+        role: "Admin",
+        hireDate: new Date('2023-01-15').toISOString(),
+        status: "Active",
+        phone: "+1-555-0123"
+    },
+    {
+        id: 2,
+        name: "Jane Smith",
+        email: "jane.smith@company.com",
+        role: "Staff",
+        hireDate: new Date('2023-03-20').toISOString(),
+        status: "Active",
+        phone: "+1-555-0456"
+    }
+];
+
 // Initial audit logs data
 const INITIAL_AUDIT_LOGS = [
     {
@@ -258,6 +280,9 @@ class DataManager {
         }
         if (!localStorage.getItem('auditLogs')) {
             localStorage.setItem('auditLogs', JSON.stringify(INITIAL_AUDIT_LOGS));
+        }
+        if (!localStorage.getItem('employees')) {
+            localStorage.setItem('employees', JSON.stringify(INITIAL_EMPLOYEES));
         }
     }
 
@@ -385,6 +410,50 @@ class DataManager {
         return true;
     }
 
+    // Employee management
+    getEmployees() {
+        return JSON.parse(localStorage.getItem('employees') || '[]');
+    }
+
+    addEmployee(employee) {
+        const employees = this.getEmployees();
+        const newEmployee = {
+            ...employee,
+            id: Date.now(),
+            hireDate: new Date().toISOString()
+        };
+        employees.push(newEmployee);
+        localStorage.setItem('employees', JSON.stringify(employees));
+        this.addActivity(`Added employee: ${employee.name}`);
+        return newEmployee;
+    }
+
+    updateEmployee(id, updates) {
+        const employees = this.getEmployees();
+        const index = employees.findIndex(e => e.id === id);
+        if (index !== -1) {
+            const oldEmployee = employees[index];
+            employees[index] = { ...oldEmployee, ...updates };
+            localStorage.setItem('employees', JSON.stringify(employees));
+            this.addActivity(`Updated employee: ${oldEmployee.name}`);
+            return employees[index];
+        }
+        return null;
+    }
+
+    deleteEmployee(id) {
+        const employees = this.getEmployees();
+        const index = employees.findIndex(e => e.id === id);
+        if (index !== -1) {
+            const deletedEmployee = employees[index];
+            employees.splice(index, 1);
+            localStorage.setItem('employees', JSON.stringify(employees));
+            this.addActivity(`Deleted employee: ${deletedEmployee.name}`);
+            return true;
+        }
+        return false;
+    }
+
     // Sales management
     getSales() {
         return JSON.parse(localStorage.getItem('sales') || '[]');
@@ -453,11 +522,53 @@ class DataManager {
         );
     }
 
-    // Authentication
+    // Audit logs management
+    getAuditLogs() {
+        return JSON.parse(localStorage.getItem('auditLogs') || '[]');
+    }
+
+    addAuditLog(log) {
+        const auditLogs = this.getAuditLogs();
+        const newLog = {
+            ...log,
+            id: Date.now(),
+            timestamp: new Date().toISOString()
+        };
+        auditLogs.unshift(newLog); // Add to beginning for recent first
+        // Keep only last 100 audit logs
+        if (auditLogs.length > 100) {
+            auditLogs.splice(100);
+        }
+        localStorage.setItem('auditLogs', JSON.stringify(auditLogs));
+        return newLog;
+    }
+
+    // Authentication with employee status check
     authenticate(username, password) {
-        const isAdmin = username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password;
-        const isStaff = STAFF_CREDENTIALS.some(staff => staff.username === username && staff.password === password);
-        return isAdmin || isStaff;
+        // Check admin credentials
+        if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+            return { authenticated: true, role: 'Admin', user: 'admin' };
+        }
+
+        // Check staff credentials
+        const staffCredential = STAFF_CREDENTIALS.find(staff => staff.username === username && staff.password === password);
+        if (staffCredential) {
+            // Find corresponding employee record
+            const employees = this.getEmployees();
+            const employee = employees.find(emp => emp.email === username || emp.name.toLowerCase().replace(' ', '.') === username);
+
+            if (employee) {
+                // Check if employee is active
+                if (employee.status !== 'Active') {
+                    return { authenticated: false, reason: 'Employee account is inactive' };
+                }
+                return { authenticated: true, role: employee.role, user: employee.name, employeeId: employee.id };
+            } else {
+                return { authenticated: false, reason: 'Employee record not found' };
+            }
+        }
+
+        return { authenticated: false, reason: 'Invalid credentials' };
     }
 }
 
