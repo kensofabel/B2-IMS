@@ -1,8 +1,66 @@
+/* Sidebar submenu styles */
+.sidebar-submenu {
+    display: none;
+    flex-direction: column;
+    background: transparent;
+    padding-left: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    gap: 0;
+}
+.sidebar-submenu.open {
+    padding: 0;
+    display: flex;
+    margin-top: 0;
+    margin-bottom: 0;
+    gap: 0;
+}
+.submenu-item {
+    font-size: 15px;
+    padding-left: 20px;
+    color: #dbdbdb;
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.submenu-item:hover {
+    color: #ff9800;
+    background: #232323;
+}
+.has-submenu .submenu-caret {
+    margin-left: auto;
+    transition: transform 0.2s;
+}
+.sidebar-submenu.open ~ .has-submenu .submenu-caret {
+    transform: rotate(180deg);
+}
+/* Sidebar section headers (Report, Accounts) */
+.nav-header {
+    padding: 15px;
+    padding-left: 50px;
+    color: #ff9800;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+    background: none;
+    border-left: 4px solid transparent;
+    border-radius: 8px 0 0 8px;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
 /* Absolutely positioned dashboard logo, always forward */
 .dashboard-logo-absolute {
     position: absolute;
-    top: 20px !important;
-    left: 80px !important;
+    top: 40px !important;
+    left: 40px !important;
     height: 60px;
     width: auto;
     object-fit: contain;
@@ -21,91 +79,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-/* Responsive main content when sidebar is collapsed */
-.sidebar.collapsed ~ .content-area,
-.dashboard-main .sidebar.collapsed ~ .content-area {
-    margin-left: 0 !important;
-    width: 100% !important;
-    transition: margin 0.3s, width 0.3s;
-}
-
-/* Sidebar default pushes content */
-.dashboard-main {
-    position: relative;
-}
-.sidebar {
-    position: relative;
-}
-.sidebar ~ .content-area {
-    margin-left: 20px;
-    width: calc(100% - 350px);
-    transition: margin 0.3s, width 0.3s;
-}
-
-@media (max-width: 900px) {
-    .sidebar ~ .content-area {
-        margin-left: 0;
-        width: 100%;
-    }
-}
-/* Sidebar Toggle Button */
-.sidebar-toggle-btn {
-    position: absolute;
-    top: 28px;
-    left: 25px;
-    z-index: 1100;
-    background: #232323;
-    color: #ff9800;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: background 0.2s, color 0.2s;
-}
-.sidebar-toggle-btn:hover {
-    background: #ff9800;
-    color: #232323;
-}
-
-/* Collapsible Sidebar */
-.sidebar {
-    transition: transform 0.3s ease, box-shadow 0.3s;
-}
-.sidebar.collapsed {
-    transform: translateX(-100%);
-    box-shadow: none;
-}
-
-/* Hover to show sidebar on left edge */
-.sidebar-hover-zone {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 24px;
-    height: 100vh;
-    z-index: 1099;
-    background: transparent;
-}
-
-@media (max-width: 768px) {
-    .sidebar-toggle-btn {
-        top: 16px;
-        left: 40px;
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
-    }
-    .sidebar-hover-zone {
-        width: 16px;
-    }
 }
 
 body {
@@ -485,25 +458,40 @@ body::before {
     background: transparent;
     margin-top: 0;
     padding-top: 0;
+    margin-left: 0;
 }
 
 .sidebar {
-    width: 350px;
+    width: 250px;
     background: #ff990048;
     box-shadow: 2px 0 10px rgba(0,0,0,0.4);
-    padding: 200px 0;
+    padding: 0p;
     border-right: 1px solid #232323;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
+
 
 .sidebar-nav {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
-.nav-item {
-    padding: 15px;
-    padding-left:30px;
+.sidebar .nav-item:first-child {
+    margin-top: 140px;
+}
+
+.sidebar .nav-item:last-child {
+    margin-bottom: 30px; /* Adds space below the last nav item */
+}
+
+
+.nav-item, .has-submenu {
+    padding: 15px 15px 15px 25px;
     color: #dbdbdb;
     text-decoration: none;
     display: flex;
@@ -512,6 +500,15 @@ body::before {
     transition: all 0.3s ease;
     border-left: 4px solid transparent;
     border-radius: 8px 0 0 8px;
+    cursor: pointer;
+}
+
+.nav-item i, .has-submenu i {
+    min-width: 22px;
+    text-align: center;
+    margin-right: 18px;
+    margin-left: 0;
+    font-size: 18px;
 }
 
 .nav-item:hover {
@@ -552,7 +549,7 @@ body::before {
     display: none;
     position: absolute;
     top: 100%;
-    left: -20px;
+    left: 0;
     background: #232323;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     border-radius: 0 0 8px 8px;
@@ -595,6 +592,7 @@ body::before {
     overflow-y: auto;
     background: transparent;
     -webkit-overflow-scrolling: touch;
+    margin-left: 250px;
 }
 
 .section {
@@ -1298,13 +1296,58 @@ body::before {
     border-top: 1px solid #333;
 }
 
-/* Add Employee form select background colors */
-#employee-role {
-    background-color: #555;
-   
+/* Custom minimal scrollbar for permissions content */
+.permissions-content::-webkit-scrollbar {
+    width: 6px;
 }
 
-#employee-status {
-    background-color: #555;
-   
+.permissions-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.permissions-content::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+    border: none;
+}
+
+.permissions-content::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+.permissions-content {
+    scrollbar-width: thin;
+    scrollbar-color: #555 transparent;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+
+    .modal-header {
+        padding: 15px 20px;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .permissions-actions {
+        flex-direction: column;
+    }
+
+    .permissions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn {
+        width: 100%;
+    }
 }
