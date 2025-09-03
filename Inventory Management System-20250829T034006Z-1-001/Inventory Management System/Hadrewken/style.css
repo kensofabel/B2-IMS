@@ -594,6 +594,7 @@ body::before {
     padding-left: 0px !important;
     overflow-y: auto;
     background: transparent;
+    -webkit-overflow-scrolling: touch;
 }
 
 .section {
@@ -921,23 +922,6 @@ body::before {
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.submit-btn {
-    padding: 15px 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;    
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .login-container {
@@ -979,6 +963,7 @@ body::before {
     .inventory-table-container,
     .sales-table-container {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -1195,6 +1180,148 @@ body::before {
     min-height: 80px;
 }
 
+/* Permissions Modal Styles */
+.permissions-content {
+    max-height: 500px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.permissions-section h3 {
+    color: #ff9800;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.permissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.role-permissions {
+    background: #181818;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #ff9800;
+}
+
+.role-permissions h4 {
+    color: #ff9800;
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+}
+
+.role-description {
+    color: #dbdbdb;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.permissions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.permission-item {
+    background: #232323;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+.permission-item:hover {
+    border-color: #ff9800;
+    background: #2a2a2a;
+}
+
+.permission-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.permission-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #555;
+    border-radius: 4px;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.3s ease;
+}
+
+.permission-checkbox input[type="checkbox"]:checked + .checkmark {
+    background: #ff9800;
+    border-color: #ff9800;
+}
+
+.permission-checkbox input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #232323;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.permission-info strong {
+    display: block;
+    color: #fff;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.permission-info small {
+    color: #dbdbdb;
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+
+.permissions-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+/* Custom minimal scrollbar for permissions content */
+.permissions-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.permissions-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.permissions-content::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+    border: none;
+}
+
+.permissions-content::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+.permissions-content {
+    scrollbar-width: thin;
+    scrollbar-color: #555 transparent;
+}
+
 /* Responsive Modal */
 @media (max-width: 768px) {
     .modal-content {
@@ -1212,6 +1339,14 @@ body::before {
 
     .form-actions {
         flex-direction: column;
+    }
+
+    .permissions-actions {
+        flex-direction: column;
+    }
+
+    .permissions-grid {
+        grid-template-columns: 1fr;
     }
 
     .btn {
