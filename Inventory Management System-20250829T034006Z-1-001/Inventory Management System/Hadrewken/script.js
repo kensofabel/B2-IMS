@@ -1,3 +1,27 @@
+// Delegated event: close all open submenus and reset carets when clicking a major nav item
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarNav = document.querySelector('.sidebar-nav');
+    if (sidebarNav) {
+        sidebarNav.addEventListener('click', function(e) {
+            // Only act if clicking a major nav item (not a submenu item or submenu toggle)
+            const navItem = e.target.closest('.nav-item');
+            if (navItem && !navItem.classList.contains('has-submenu') && !e.target.classList.contains('submenu-item')) {
+                // Close all open submenus
+                document.querySelectorAll('.sidebar-submenu.open').forEach(s => {
+                    s.classList.remove('open');
+                });
+                // Reset all carets and active states
+                document.querySelectorAll('.has-submenu.active').forEach(a => {
+                    a.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-caret').forEach(caret => {
+                    caret.classList.remove('fa-caret-down');
+                    caret.classList.add('fa-caret-right');
+                });
+            }
+        });
+    }
+});
 // Delayed hide for notification and profile dropdowns
 document.addEventListener('DOMContentLoaded', function() {
     function setupDelayedDropdown(dropdownSelector, menuSelector) {
@@ -29,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupDelayedDropdown('.profile-dropdown', '.profile-menu');
 });
 
+
 // Ensure all submenu carets start pointing right on page load
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.submenu-caret').forEach(function(caret) {
@@ -53,8 +78,10 @@ function toggleSidebarSubmenu(event, submenuId) {
         });
         document.querySelectorAll('.has-submenu.active').forEach(a => {
             a.classList.remove('active');
-            const c = a.querySelector('.submenu-caret');
-            if (c) { c.classList.remove('fa-caret-down'); c.classList.add('fa-caret-right'); }
+        });
+        document.querySelectorAll('.submenu-caret').forEach(caret => {
+            caret.classList.remove('fa-caret-down');
+            caret.classList.add('fa-caret-right');
         });
         submenu.classList.add('open');
         parent.classList.add('active');
@@ -67,6 +94,9 @@ function toggleSidebarSubmenu(event, submenuId) {
         }
     }
 }
+
+
+
 // Main JavaScript functionality for POS system
 
 class POSSystem {
@@ -182,7 +212,10 @@ class POSSystem {
         window.location.href = 'index.html';
     }
 
-    showSection(sectionId) {
+
+
+    showSection(sectionId, event) {
+
         // Hide all sections
         document.querySelectorAll('.section').forEach(section => {
             section.classList.remove('active');
@@ -1205,7 +1238,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Restore sidebar submenu caret toggle ---
     document.querySelectorAll('.has-subzmenu').forEach(function(menu) {
         menu.addEventListener('click', function(e) {
-            // Only toggle if clicking the menu itself, not a submenu item
+            // Only to  ggle if clicking the menu itself, not a submenu item
             if (e.target.closest('.submenu-item')) return;
             // Close other open submenus (optional, comment out if not needed)
             document.querySelectorAll('.has-submenu.open').forEach(function(openMenu) {
