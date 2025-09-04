@@ -1,3 +1,72 @@
+// Delayed hide for notification and profile dropdowns
+document.addEventListener('DOMContentLoaded', function() {
+    function setupDelayedDropdown(dropdownSelector, menuSelector) {
+        document.querySelectorAll(dropdownSelector).forEach(function(dropdown) {
+            let hideTimeout;
+            const menu = dropdown.querySelector(menuSelector);
+            if (!menu) return;
+            dropdown.addEventListener('mouseenter', function() {
+                clearTimeout(hideTimeout);
+                menu.style.display = 'block';
+            });
+            dropdown.addEventListener('mouseleave', function() {
+                hideTimeout = setTimeout(function() {
+                    menu.style.display = 'none';
+                }, 300);
+            });
+            menu.addEventListener('mouseenter', function() {
+                clearTimeout(hideTimeout);
+                menu.style.display = 'block';
+            });
+            menu.addEventListener('mouseleave', function() {
+                hideTimeout = setTimeout(function() {
+                    menu.style.display = 'none';
+                }, 300);
+            });
+        });
+    }
+    setupDelayedDropdown('.notification-dropdown', '.notification-menu');
+    setupDelayedDropdown('.profile-dropdown', '.profile-menu');
+});
+
+// Ensure all submenu carets start pointing right on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.submenu-caret').forEach(function(caret) {
+        caret.classList.add('fa-caret-right');
+    });
+});
+// Toggle sidebar submenu caret icon
+function toggleSidebarSubmenu(event, submenuId) {
+    event.preventDefault();
+    const submenu = document.getElementById(submenuId);
+    const parent = event.currentTarget;
+    const caret = parent.querySelector('.submenu-caret');
+    if (submenu.classList.contains('open')) {
+        submenu.classList.remove('open');
+        parent.classList.remove('active');
+        caret.classList.remove('fa-caret-down');
+        caret.classList.add('fa-caret-right');
+    } else {
+        // Close other submenus
+        document.querySelectorAll('.sidebar-submenu.open').forEach(s => {
+            s.classList.remove('open');
+        });
+        document.querySelectorAll('.has-submenu.active').forEach(a => {
+            a.classList.remove('active');
+            const c = a.querySelector('.submenu-caret');
+            if (c) { c.classList.remove('fa-caret-down'); c.classList.add('fa-caret-right'); }
+        });
+        submenu.classList.add('open');
+        parent.classList.add('active');
+        caret.classList.remove('fa-caret-right');
+        caret.classList.add('fa-caret-down');
+        // Automatically trigger click on the first submenu-item
+        const firstItem = submenu.querySelector('.submenu-item');
+        if (firstItem) {
+            firstItem.click();
+        }
+    }
+}
 // Main JavaScript functionality for POS system
 
 class POSSystem {
@@ -1131,5 +1200,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target === employeeFormModal) {
             closeEmployeeFormModal();
         }
+    });
+
+    // --- Restore sidebar submenu caret toggle ---
+    document.querySelectorAll('.has-subzmenu').forEach(function(menu) {
+        menu.addEventListener('click', function(e) {
+            // Only toggle if clicking the menu itself, not a submenu item
+            if (e.target.closest('.submenu-item')) return;
+            // Close other open submenus (optional, comment out if not needed)
+            document.querySelectorAll('.has-submenu.open').forEach(function(openMenu) {
+                if (openMenu !== menu) {
+                    openMenu.classList.remove('open');
+                    var openSub = openMenu.querySelector('.sidebar-submenu');
+                    if (openSub) openSub.classList.remove('open');
+                }
+            });
+            // Toggle open class on this menu and its submenu
+            menu.classList.toggle('open');
+            var submenu = menu.querySelector('.sidebar-submenu');
+            if (submenu) submenu.classList.toggle('open');
+        });
     });
 });
