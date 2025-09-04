@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,11 +17,20 @@
             <div class="header-left">
             </div>
             <div class="header-right">
-                <span class="welcome-text">Welcome, Admin</span>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div> 
+                <div class="notification-dropdown">
+                    <i class="fas fa-bell"></i>
+                    <div class="notification-menu">
+                        <div class="notification-item">No new notifications</div>
+                    </div>
+                </div>
+                <div class="profile-dropdown">
+                    <i class="fas fa-user-circle"></i>
+                    <div class="profile-menu">
+                        <div class="profile-item" onclick="profile()"><i class="fas fa-user"></i> Profile</div>
+                        <div class="profile-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+                    </div>
+                </div>
+            </div>
         </header>
         <!-- Logo absolutely positioned, always forward -->
         <img class="dashboard-logo-absolute" src="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/Untitled_design__1_-removebg-preview.png?raw=true" alt="Dashboard Logo" style="position:absolute; top:10px; left:10px; z-index:100;">
@@ -41,17 +50,17 @@
                         <i class="fas fa-boxes"></i> Inventory
                     </a>
                     <a href="#" class="nav-item has-submenu" onclick="toggleSidebarSubmenu(event, 'report-submenu')">
-                        <i class="fas fa-file-alt"></i> Report <i class="fas fa-caret-down submenu-caret"></i>
+                        <i class="fas fa-file-alt"></i> Reports <i class="fas fa-caret-down submenu-caret"></i>
                     </a>
                     <div class="sidebar-submenu" id="report-submenu">
                         <a href="#sales-report" class="nav-item submenu-item" onclick="showSection('sales-report')">
-                            <i class="fas fa-chart-bar"></i> Sales Report
+                            Sales Report
                         </a>
                         <a href="#inventory-reports" class="nav-item submenu-item" onclick="showSection('inventory-reports')">
-                            <i class="fas fa-boxes"></i> Inventory Reports
+                            Inventory Report
                         </a>
                         <a href="#payment-reports" class="nav-item submenu-item" onclick="showSection('payment-reports')">
-                            <i class="fas fa-credit-card"></i> Payment Reports
+                            Payment Report
                         </a>
                     </div>
                     <a href="#" class="nav-item has-submenu" onclick="toggleSidebarSubmenu(event, 'accounts-submenu')">
@@ -59,10 +68,10 @@
                     </a>
                     <div class="sidebar-submenu" id="accounts-submenu">
                         <a href="#access-rights" class="nav-item submenu-item" onclick="showSection('access-rights')">
-                            <i class="fas fa-shield-alt"></i> ACCESS RIGHTS
+                            Access Rights
                         </a>
                         <a href="#employee" class="nav-item submenu-item" onclick="showSection('employee')">
-                            <i class="fas fa-user-tie"></i> EMPLOYEE
+                            Employee
                         </a>
                     </div>
 <script>
