@@ -1,31 +1,92 @@
+/* Notification and Profile Dropdowns in Header */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+.notification-dropdown, .profile-dropdown {
+    position: relative;
+    cursor: pointer;
+}
+.notification-dropdown i, .profile-dropdown i {
+    font-size: 22px;
+    color: #dbdbdb;
+    transition: color 0.2s;
+}
+.notification-dropdown:hover i, .profile-dropdown:hover i {
+    color: #ff9800;
+}
+.notification-menu, .profile-menu {
+    display: none;
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background: #232323;
+    min-width: 160px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    border-radius: 8px;
+    z-index: 100;
+    padding: 8px 0;
+}
+.notification-dropdown:hover .notification-menu,
+.profile-dropdown:hover .profile-menu {
+    display: block;
+}
+.notification-item, .profile-item {
+    padding: 10px 20px;
+    color: #dbdbdb;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+.notification-item:hover, .profile-item:hover {
+    background: #ff9800;
+    color: #232323;
+}
+.profile-item i {
+    margin-right: 8px;
+}
 /* Sidebar submenu styles */
 .sidebar-submenu {
-    display: none;
+    max-height: 0;
+    overflow: hidden;
     flex-direction: column;
     background: transparent;
-    padding-left: 30px;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    gap: 0;
+    opacity: 0;
+    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
+    padding-left:53px !important;
 }
 .sidebar-submenu.open {
-    padding: 0;
+    position: relative;
     display: flex;
-    margin-top: 0;
-    margin-bottom: 0;
     gap: 0;
+    max-height: 500px;
+    opacity: 1;
+    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
 }
+
+.sidebar-submenu.open::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 40px;
+    width: 1.5px;
+    height: calc(100% - 16px);
+    background: #e5e5e5;
+    border-radius: 1px;
+    z-index: 0;
+    pointer-events: none;
+}   
+
 .submenu-item {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
     font-size: 15px;
-    padding-left: 20px;
     color: #dbdbdb;
     background: none;
     border: none;
     box-shadow: none;
-    margin-top: 0;
-    margin-bottom: 0;
 }
 .submenu-item:hover {
     color: #ff9800;
@@ -35,33 +96,13 @@
     margin-left: auto;
     transition: transform 0.2s;
 }
-.sidebar-submenu.open ~ .has-submenu .submenu-caret {
-    transform: rotate(180deg);
-}
-/* Sidebar section headers (Report, Accounts) */
-.nav-header {
-    padding: 15px;
-    padding-left: 50px;
-    color: #ff9800;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 14px;
-    background: none;
-    border-left: 4px solid transparent;
-    border-radius: 8px 0 0 8px;
-    margin-top: 10px;
-    margin-bottom: 0;
-}
+
 /* Absolutely positioned dashboard logo, always forward */
 .dashboard-logo-absolute {
     position: absolute;
-    top: 40px !important;
+    top: 10px !important;
     left: 40px !important;
-    height: 60px;
+    height: 50px;
     width: auto;
     object-fit: contain;
     z-index: 9999 !important;
@@ -404,14 +445,15 @@ body::before {
 /* Dashboard Styles */
 .dashboard-container {
     min-height: 100vh;
-    background: transparent;
+    background: transparent\\\\;
 }
 
 .dashboard-header {
     background: transparent;
-    padding: 40px 40px;
+    padding: 23px 40px;
     display: flex;
     justify-content: space-between;
+    box-shadow: #2c2a27 0 2px 4px -1px, #35322d 0 4px 5px 0, #332e28 0 1px 10px 0;
     align-items: center;
     position: absolute;
     top: 0;
@@ -456,16 +498,17 @@ body::before {
     display: flex;
     min-height: 100vh;
     background: transparent;
-    margin-top: 0;
+    margin-top: 0;  
     padding-top: 0;
     margin-left: 0;
 }
 
 .sidebar {
-    width: 250px;
+    width: 270px;
     background: #ff990048;
     box-shadow: 2px 0 10px rgba(0,0,0,0.4);
-    padding: 0p;
+    padding-left: 10px;
+    padding-right: 10px;
     border-right: 1px solid #232323;
     height: 100vh;
     display: flex;
@@ -482,7 +525,7 @@ body::before {
 }
 
 .sidebar .nav-item:first-child {
-    margin-top: 140px;
+    margin-top: 90px;
 }
 
 .sidebar .nav-item:last-child {
@@ -499,7 +542,7 @@ body::before {
     gap: 12px;
     transition: all 0.3s ease;
     border-left: 4px solid transparent;
-    border-radius: 8px 0 0 8px;
+    border-radius: 8px 8px 8px 8px;
     cursor: pointer;
 }
 
