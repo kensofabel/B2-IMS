@@ -16,6 +16,12 @@
         <header class="dashboard-header">
             <div class="header-left">
             </div>
+            <div class="header-search">
+                <form id="dashboard-search-form" onsubmit="event.preventDefault(); /* Add search logic here */">
+                    <input type="text" id="dashboard-search" placeholder="Search...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
             <div class="header-right">
                 <div class="notification-dropdown">
                     <i class="fas fa-bell"></i>
@@ -74,19 +80,6 @@
                             Employee
                         </a>
                     </div>
-<script>
-function toggleSidebarSubmenu(event, submenuId) {
-    event.preventDefault();
-    var submenu = document.getElementById(submenuId);
-    if (submenu) {
-        submenu.classList.toggle('open');
-    }
-    // Optionally close other submenus
-    document.querySelectorAll('.sidebar-submenu').forEach(function(el) {
-        if (el.id !== submenuId) el.classList.remove('open');
-    });
-}
-</script>
                     <a href="#audit-logs" class="nav-item" onclick="showSection('audit-logs')">
                         <i class="fas fa-history"></i> Audit Logs
                     </a>
