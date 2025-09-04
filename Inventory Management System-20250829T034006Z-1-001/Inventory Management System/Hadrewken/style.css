@@ -1,3 +1,45 @@
+/* Dashboard Header Search Bar */
+.header-search {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 300px;
+    align-items: center;
+}
+.header-search form {
+    display: flex;
+    align-items: flex baseline;
+    background: #232323;
+    border-radius: 20px;
+    padding: 4px 20px;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+}
+.header-search input[type="text"] {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 15px;
+    padding: 8px 8px 8px 0;
+    outline: none;
+    width: 180px;
+    transition: width 0.3s;
+}
+.header-search input[type="text"]:focus {
+    width: 240px;
+}
+.header-search button {
+    background: none;
+    border: none;
+    color: #ff9800;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 4px;
+    outline: none;
+    transition: color 0.2s;
+}
+.header-search button:hover {
+    color: #fff;
+}
 /* Notification and Profile Dropdowns in Header */
 .header-right {
     display: flex;
@@ -100,8 +142,8 @@
 /* Absolutely positioned dashboard logo, always forward */
 .dashboard-logo-absolute {
     position: absolute;
-    top: 10px !important;
-    left: 40px !important;
+    top: 15px !important;
+    left: 50px !important;
     height: 50px;
     width: auto;
     object-fit: contain;
@@ -453,13 +495,16 @@ body::before {
     padding: 23px 40px;
     display: flex;
     justify-content: space-between;
-    box-shadow: #2c2a27 0 2px 4px -1px, #35322d 0 4px 5px 0, #332e28 0 1px 10px 0;
     align-items: center;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 10;
+    z-index: 1100;
+}
+/* Ensure main content is not hidden under fixed header */
+.dashboard-main {
+    padding-top: 80px !important;
 }
 
 .header-left h1 {
@@ -496,23 +541,37 @@ body::before {
 
 .dashboard-main {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
     background: transparent;
-    margin-top: 0;  
-    padding-top: 0;
+    margin-top: 0;
+    padding-top: 80px; /* Height of header */
     margin-left: 0;
+    overflow: hidden;
+}
+
+.content-area {
+    margin-left: 350px !important;
+    padding: 80px 80px !important;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    height: calc(100vh - 80px);
 }
 
 .sidebar {
     width: 270px;
     background: #ff990048;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.4);
     padding-left: 10px;
     padding-right: 10px;
-    border-right: 1px solid #232323;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    padding-top: 20px !important ; /* Height of header */
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 1000;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.08);
 }
 
 
@@ -525,7 +584,7 @@ body::before {
 }
 
 .sidebar .nav-item:first-child {
-    margin-top: 90px;
+    margin-top: 140px;
 }
 
 .sidebar .nav-item:last-child {
@@ -764,7 +823,7 @@ body::before {
 
 .activity-item {
     padding: 15px;
-    background: #181818;
+    background: #ff9800;
     border-radius: 10px;
     border-left: 4px solid #ff9800;
 }
