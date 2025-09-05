@@ -141,25 +141,10 @@
     margin-left: auto;
     transition: transform 0.2s;
 }
+.has-submenu.open .submenu-caret {
+    transform: rotate(90deg);
+}
 
-/* Absolutely positioned dashboard logo, always forward */
-.dashboard-logo-absolute {
-    position: fixed !important;
-    top: 15px !important;
-    left: 50px !important;
-    height: 50px;
-    width: auto;
-    object-fit: contain;
-    z-index: 9999 !important;
-    pointer-events: none;
-}
-@media (max-width: 600px) {
-    .dashboard-logo-absolute {
-        top: 10px;
-        left: 10px;
-        height: 36px;
-    }
-}
 /* Reset and Base Styles */
 * {
     margin: 0;
@@ -494,24 +479,35 @@ body::before {
 }
 
 .dashboard-header {
-    background: transparent; /* Same as sidebar */
-    padding: 23px 40px;
+    height: 70px; /* Match logo height */
+    padding: 0 50px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1100;
-    /* Optional: add box-shadow for depth */
+    background: transparent;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-/* Ensure main content is not hidden under fixed header */
-.dashboard-main {
-    padding-top: 80px !important;
+    transition: all 0.3s ease;
 }
 
+.dashboard-logo {
+    height: 50px !important;
+    width: auto;
+    object-fit: contain;
+    margin-right: 18px;
+    vertical-align: middle;
+}
+
+/* Ensure main content is not hidden under fixed header */
+.dashboard-main {
+    padding-top: 60px !important; /* Match header height */
+}
+.content-area {
+    padding-top: 60px !important; /* Match header height */
+}
 .header-left h1 {
     color: #2d3748;
     font-size: 1.8rem;
@@ -571,7 +567,7 @@ body::before {
     flex-direction: column;
     padding-top: 20px !important ; /* Height of header */
     position: fixed;
-    top: 90px;
+    top: 75px;
     left: 0;
     overflow: hidden;
     z-index: 1000;
@@ -1450,5 +1446,30 @@ body::before {
 
     .btn {
         width: 100%;
+    }
+}
+
+/* Responsive header for small devices */
+@media (max-width: 900px) {
+    .sidebar {
+        position: fixed;
+        width: 90px !important;
+        transition: left 0.3s ease;
+    }
+    .content-area {
+        margin-top: 70px !important;
+        margin-left: 100px !important;
+        padding: 50px 80px !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-header {
+        height: 60px;
+        padding: 10px 10px !important;
+        font-size: 1.2rem;
+    }
+    .sidebar {
+        top: 65px !important;
     }
 }
