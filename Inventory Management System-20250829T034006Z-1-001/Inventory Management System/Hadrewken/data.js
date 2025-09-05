@@ -17,7 +17,7 @@ const ADMIN_CREDENTIALS = {
     password: "admin123" // In a real application, this would be hashed
 };
 
-// zinitial data
+// Initial data
 const INITIAL_PRODUCTS = [
     {
         id: 1,
@@ -26,6 +26,16 @@ const INITIAL_PRODUCTS = [
         price: 2.99,
         stock: 50,
         description: "Fresh red apples",
+        sku: "FRT-APP-001",
+        brand: "Fresh Farms",
+        supplier: "Local Orchard Co.",
+        barcode: "123456789012",
+        variants: [
+            { name: "Red Delicious", price: 2.99, stock: 30 },
+            { name: "Granny Smith", price: 3.19, stock: 20 }
+        ],
+        reorderPoint: 20,
+        lowStockThreshold: 15,
         createdAt: new Date().toISOString()
     },
     {
@@ -35,6 +45,16 @@ const INITIAL_PRODUCTS = [
         price: 3.49,
         stock: 30,
         description: "Whole milk 1 gallon",
+        sku: "DRY-MIL-001",
+        brand: "Dairy Best",
+        supplier: "Fresh Dairy Farms",
+        barcode: "123456789013",
+        variants: [
+            { name: "Whole Milk", price: 3.49, stock: 20 },
+            { name: "2% Milk", price: 3.29, stock: 10 }
+        ],
+        reorderPoint: 15,
+        lowStockThreshold: 12,
         createdAt: new Date().toISOString()
     },
     {
@@ -44,6 +64,16 @@ const INITIAL_PRODUCTS = [
         price: 2.49,
         stock: 5,
         description: "Whole wheat bread",
+        sku: "BAK-BRD-001",
+        brand: "Golden Grain",
+        supplier: "Bakery Supply Co.",
+        barcode: "123456789014",
+        variants: [
+            { name: "Whole Wheat", price: 2.49, stock: 3 },
+            { name: "White Bread", price: 2.29, stock: 2 }
+        ],
+        reorderPoint: 10,
+        lowStockThreshold: 8,
         createdAt: new Date().toISOString()
     },
     {
@@ -53,11 +83,21 @@ const INITIAL_PRODUCTS = [
         price: 8.99,
         stock: 25,
         description: "Boneless chicken breast",
+        sku: "MEA-CHK-001",
+        brand: "Premium Poultry",
+        supplier: "Meat Packers Inc.",
+        barcode: "123456789015",
+        variants: [
+            { name: "Boneless", price: 8.99, stock: 15 },
+            { name: "Bone-in", price: 7.99, stock: 10 }
+        ],
+        reorderPoint: 12,
+        lowStockThreshold: 10,
         createdAt: new Date().toISOString()
     }
 ];
 
-// New initial s data
+// Initial roles data
 const INITIAL_ROLES = [
     {
         id: 1,
@@ -284,6 +324,17 @@ class DataManager {
         if (!localStorage.getItem('employees')) {
             localStorage.setItem('employees', JSON.stringify(INITIAL_EMPLOYEES));
         }
+        if (!localStorage.getItem('settings')) {
+            const defaultSettings = {
+                lowStockThreshold: 10,
+                currencySymbol: '$',
+                taxRate: 0.08,
+                businessName: 'My Business',
+                discounts: 0,
+                paymentTypes: ['Cash', 'Card', 'Credit']
+            };
+            localStorage.setItem('settings', JSON.stringify(defaultSettings));
+        }
     }
 
     // Product management
@@ -300,7 +351,7 @@ class DataManager {
         };
         products.push(newProduct);
         localStorage.setItem('products', JSON.stringify(products));
-        
+
         // Add activity
         this.addActivity(`Added product: ${product.name}`);
         return newProduct;
@@ -541,6 +592,17 @@ class DataManager {
         }
         localStorage.setItem('auditLogs', JSON.stringify(auditLogs));
         return newLog;
+    }
+
+    // Settings management
+    getSettings() {
+        return JSON.parse(localStorage.getItem('settings') || '{}');
+    }
+
+    updateSettings(newSettings) {
+        localStorage.setItem('settings', JSON.stringify(newSettings));
+        this.addActivity('Settings updated');
+        return true;
     }
 
     // Authentication with employee status check
