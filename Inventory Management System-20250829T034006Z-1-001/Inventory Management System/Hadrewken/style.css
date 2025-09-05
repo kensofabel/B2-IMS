@@ -2,17 +2,20 @@
 .header-search {
     flex: 1;
     display: flex;
-    justify-content: flex-start;
-    padding-left: 300px;
+    justify-content: center;
     align-items: center;
 }
 .header-search form {
     display: flex;
     align-items: flex baseline;
-    background: #232323;
+    background: transparent; /* Transparent by default */
     border-radius: 20px;
     padding: 4px 20px;
     box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+    transition: background 0.3s;
+}
+.header-search form:focus-within {
+    background: #232323;
 }
 .header-search input[type="text"] {
     border: none;
@@ -21,11 +24,11 @@
     font-size: 15px;
     padding: 8px 8px 8px 0;
     outline: none;
-    width: 180px;
+    width: 300px;
     transition: width 0.3s;
 }
 .header-search input[type="text"]:focus {
-    width: 240px;
+    width: 350px;
 }
 .header-search button {
     background: none;
@@ -141,7 +144,7 @@
 
 /* Absolutely positioned dashboard logo, always forward */
 .dashboard-logo-absolute {
-    position: absolute;
+    position: fixed !important;
     top: 15px !important;
     left: 50px !important;
     height: 50px;
@@ -491,7 +494,7 @@ body::before {
 }
 
 .dashboard-header {
-    background: #ff990048; /* Same as sidebar */
+    background: transparent; /* Same as sidebar */
     padding: 23px 40px;
     display: flex;
     justify-content: space-between;
@@ -552,8 +555,6 @@ body::before {
 }
 
 .content-area {
-    margin-left: 550px !important;
-    margin-right: 200px !important;
     padding: 80px 80px !important;
     flex: 1 1 auto;
     overflow-y: auto;
@@ -562,7 +563,7 @@ body::before {
 
 .sidebar {
     width: 270px;
-    background: #ff990048;
+    background: transparent; /* Dark background */
     padding-left: 10px;
     padding-right: 10px;
     height: 100vh;
@@ -570,7 +571,7 @@ body::before {
     flex-direction: column;
     padding-top: 20px !important ; /* Height of header */
     position: fixed;
-    top: 87px;
+    top: 90px;
     left: 0;
     overflow: hidden;
     z-index: 1000;
@@ -587,7 +588,7 @@ body::before {
 }
 
 .sidebar .nav-item:last-child {
-    margin-bottom: 30px; /* Adds space below the last nav item */
+    margin-bottom: 120px; /* Adds space below the last nav item */
 }
 
 
@@ -688,12 +689,11 @@ body::before {
 
 .content-area {
     flex: 1;
-    padding: 200px;
-    padding-left: 0px !important;
+    padding: 50px 250px !important;
     overflow-y: auto;
     background: transparent;
     -webkit-overflow-scrolling: touch;
-    margin-left: 250px;
+    margin-left: 270px;
 }
 
 .section {
