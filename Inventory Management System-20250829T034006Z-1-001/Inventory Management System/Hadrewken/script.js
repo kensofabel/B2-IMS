@@ -1,1454 +1,1325 @@
-/* Dashboard Header Search Bar */
-.header-search {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.header-search form {
-    display: flex;
-    align-items: flex baseline;
-    background: transparent; /* Transparent by default */
-    border-radius: 20px;
-    padding: 4px 20px;
-    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
-    transition: background 0.3s;
-}
-.header-search form:focus-within {
-    background: #232323;
-}
-.header-search input[type="text"] {
-    border: none;
-    background: transparent;
-    color: #fff;
-    font-size: 15px;
-    padding: 8px 8px 8px 0;
-    outline: none;
-    width: 300px;
-    transition: width 0.3s;
-}
-.header-search input[type="text"]:focus {
-    width: 350px;
-}
-.header-search button {
-    background: none;
-    border: none;
-    color: #ff9800;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 0 4px;
-    outline: none;
-    transition: color 0.2s;
-}
-.header-search button:hover {
-    color: #fff;
-}
-/* Notification and Profile Dropdowns in Header */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    position: relative;
-}
-.notification-dropdown, .profile-dropdown {
-    position: relative;
-    cursor: pointer;
-}
-.notification-dropdown i, .profile-dropdown i {
-    font-size: 22px;
-    color: #dbdbdb;
-    transition: color 0.2s;
-}
-.notification-dropdown:hover i, .profile-dropdown:hover i {
-    color: #ff9800;
-}
-.notification-menu, .profile-menu {
-    display: none;
-    position: absolute;
-    top: 120%;
-    right: 0;
-    background: #232323;
-    min-width: 160px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    border-radius: 8px;
-    z-index: 100;
-    padding: 8px 0;
-}
-.notification-dropdown:hover .notification-menu,
-.profile-dropdown:hover .profile-menu {
-    display: block;
-}
-.notification-item, .profile-item {
-    padding: 10px 20px;
-    color: #dbdbdb;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    white-space: nowrap;
-}
-.notification-item:hover, .profile-item:hover {
-    background: #ff9800;
-    color: #232323;
-}
-.profile-item i {
-    margin-right: 8px;
-}
-/* Sidebar submenu styles */
-.sidebar-submenu {
-    max-height: 0;
-    overflow: hidden;
-    flex-direction: column;
-    background: transparent;
-    opacity: 0;
-    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
-    padding-left:53px !important;
-}
-.sidebar-submenu.open {
-    position: relative;
-    display: flex;
-    gap: 0;
-    max-height: 500px;
-    opacity: 1;
-    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
-}
-
-.sidebar-submenu.open::before {
-    content: "";
-    position: absolute;
-    top: 8px;
-    left: 40px;
-    width: 1.5px;
-    height: calc(100% - 16px);
-    background: #e5e5e5;
-    border-radius: 1px;
-    z-index: 0;
-    pointer-events: none;
-}   
-
-.submenu-item {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    font-size: 15px;
-    color: #dbdbdb;
-    background: none;
-    border: none;
-    box-shadow: none;
-}
-.submenu-item:hover {
-    color: #ff9800;
-    background: #232323;
-}
-.has-submenu .submenu-caret {
-    margin-left: auto;
-    transition: transform 0.2s;
-}
-
-/* Absolutely positioned dashboard logo, always forward */
-.dashboard-logo-absolute {
-    position: fixed !important;
-    top: 15px !important;
-    left: 50px !important;
-    height: 50px;
-    width: auto;
-    object-fit: contain;
-    z-index: 9999 !important;
-    pointer-events: none;
-}
-@media (max-width: 600px) {
-    .dashboard-logo-absolute {
-        top: 10px;
-        left: 10px;
-        height: 36px;
+// Delegated event: close all open submenus and reset carets when clicking a major nav item
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarNav = document.querySelector('.sidebar');
+    if (sidebarNav) {
+        sidebarNav.addEventListener('click', function(e) {
+            // Only act if clicking a major nav item (not a submenu item or submenu toggle)
+            const navItem = e.target.closest('.nav-item');
+            if (navItem && !navItem.classList.contains('has-submenu') && !e.target.classList.contains('submenu-item')) {
+                // Close all open submenus
+                document.querySelectorAll('.sidebar-submenu.open').forEach(s => {
+                    s.classList.remove('open');
+                });
+                // Reset all carets and active states
+                document.querySelectorAll('.has-submenu.active').forEach(a => {
+                    a.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-caret').forEach(caret => {
+                    caret.classList.remove('fa-caret-down');
+                    caret.classList.add('fa-caret-right');
+                });
+            }
+        });
     }
-}
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #181818 url("https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/background.png?raw=true") no-repeat center center fixed;
-    background-size: cover;
-    min-height: 100vh;
-    color: #f5f5f5;
-    position: relative;
-}
-
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: -1;
-}
-
-.background-animated {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-    pointer-events: none;
-    /* Example: animated gradient */
-    background: linear-gradient(270deg, rgba(60,60,60,0.35), rgba(30,30,30,0.25), rgba(0,0,0,0.45), rgba(100,100,100,0.25));
-    background-size: 600% 600%;
-    animation: gradientMove 60s ease infinite;
-}
-@keyframes gradientMove {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-}
-
-/* Login Page Styles */
-.login-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    height: 100vh;
-    padding-left: 30%;
-    padding-right: 10px;
-}
-.login-card {
-    background: transparent;
-    padding: 10px 40px 30px 40px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 350px;
-    text-align: center;
-    animation: slideUpFadeIn 0.8s ease-out;
-    transform-origin: center;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 2;
-}
-
-.login-card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-}
-
-.login-header {
-    margin-bottom: 0px;
-    animation: slideUpFadeIn 0.6s ease-out 0.2s both;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.logo {
-    width: 250px;
-    height: 250px;
-    object-fit: contain;
-    margin-bottom: 0px !important;
-    border-radius: 12px;
-    transition: transform 0.3s ease;
-    animation: slideUpFadeIn 0.6s ease-out 0.1s both;
-}
-
-.logo:hover {
-    transform: scale(1.05);
-}
-
-.login-header p {
-    color: #dbdbdb;
-    font-size: 1.1rem;
-    animation: slideUpFadeIn 0.6s ease-out 0.4s both;
-}
-
-.login-form {
-    padding-top: 10px !important;
-    text-align: left;
-}
-
-.form-group {
-    margin-top: 0px !important;
-    margin-bottom: 6px !important;
-    animation: slideUpFadeIn 0.6s ease-out 0.5s both;
-    position: relative;
-}
-
-.form-group:nth-child(2) {
-    animation-delay: 0.6s;
-}
-
-.form-group label {
-    position: absolute;
-    top: 50%;
-    left: 8px;
-    transform: translateY(-50%);
-    color: #dbdbdb !important;
-    font-size: 12px;
-    font-weight: 100 !important;
-    pointer-events: none;
-    transition: all 0.1s ease-in-out;
-    background-color: transparent;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 17px 5px 5px !important;
-    border: 0.5px solid #7a7a7a !important;
-    border-radius: 3px !important;
-    background-color: transparent !important;
-    text-indent: 4px;
-    font-size: 12px;
-    font-weight: 100 !important;
-    color: #ffffff !important;
-    transition: all 0.1s ease-in-out;
-}
-
-/* Fix autocomplete white background */
-.form-group input:-webkit-autofill,
-.form-group input:-webkit-autofill:hover,
-.form-group input:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-    -webkit-text-fill-color: #ffffff !important;
-    background-color: transparent !important;
-    transition: background-color 5000s ease-in-out 0s;
-}
-
-/* Password toggle eye icon */
-.password-toggle {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    color: #dbdbdb;
-    user-select: none;
-    transition: color 0.2s ease;
-    z-index: 10;
-    -webkit-text-stroke: 1px rgba(250, 250, 250, 0.3);
-}
-
-/* Custom thick slash overlay */
-.password-toggle.slashed::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 18px;
-    height: 3px;
-    background-color: rgb(0, 0, 0);
-    transform: translate(-50%, -50%) rotate(-45deg);
-    z-index: 1;
-}
-
-.password-toggle:hover {
-    color: #ffffff;
-}
-
-.form-group input:focus {
-    outline: none;
-    border: 0.5px solid #dbdbdb !important;
-    background-color: transparent;
-}
-
-.form-group input:focus + label,
-.form-group input:valid + label {
-    top: 9px;
-    left: 8px;
-    font-size: 10px;
-    color: #d6d6d6;
-    transform: translateY(-4px);
-    background-color: transparent;
-    padding: 0 2px;
-}
-
-.form-group input:hover {
-    border: 0.5px solid #dbdbdb !important;
-}
-
-.login-btn {
-    width: 100%;
-    padding: 8px;
-    margin-top: 8px;
-    background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    animation: slideUpFadeIn 0.6s ease-out 0.7s both;
-}
-
-.login-btn:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #e68900 0%, #e64100 100%);
-}
-
-.login-btn:active { 
-    transform: translateY(0);
-}
-
-.login-btn.loading {
-    pointer-events: none;
-    background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
-    opacity: 0.7;
-}
-
-.login-btn.loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin: -10px 0 0 -10px;
-    border: 2px solid transparent;
-    border-top: 2px solid white;
-    border-radius: 50%;
-    animation: buttonLoading 0.8s linear infinite;
-}
-
-.login-btn.success {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-}
-
-.login-btn.success::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 18px;
-    animation: successCheckmark 0.5s ease-out;
-}
-
-/* Instagram-style Login Links */
-.login-links {
-    text-align: center;
-    margin-top: 12px;
-    margin-bottom: 18px;
-    animation: slideUpFadeIn 0.6s ease-out 0.8s both;
-}
-
-.forgot-password {
-    color: #dbdbdb;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 400;
-    transition: color 0.2s ease;
-}
-
-.forgot-password:hover {
-    color: #ffffff;
-}
-
-.signup-section {
-    text-align: center;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    animation: slideUpFadeIn 0.6s ease-out 0.9s both;
-}
-
-.signup-section p {
-    color: #dbdbdb;
-    font-size: 14px;
-    font-weight: 400;
-    margin: 0;
-}
-
-.signup-link {
-    color: #ff9800;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s ease;
-}
-
-.signup-link:hover {
-    color: #ff5722;
-}
-
-.error-message {
-    color: #e53e3e;
-    margin-top: 15px;
-    text-align: center;
-    font-weight: 600;
-    animation: slideUpFadeIn 0.6s ease-out;
-}
-
-.error-message.shake {
-    animation: shake 0.5s ease-in-out;
-}
-
-/* Dashboard Styles */
-.dashboard-container {
-    min-height: 100vh;
-    background: transparent\\\\;
-}
-
-.dashboard-header {
-    background: transparent; /* Same as sidebar */
-    padding: 23px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1100;
-    /* Optional: add box-shadow for depth */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-/* Ensure main content is not hidden under fixed header */
-.dashboard-main {
-    padding-top: 80px !important;
-}
-
-.header-left h1 {
-    color: #2d3748;
-    font-size: 1.8rem;
-    font-weight: 700;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.welcome-text {
-    color: #4a5568;
-    font-weight: 600;
-}
-
-.logout-btn {
-    padding: 10px 20px;
-    background: #e53e3e;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s ease;
-}
-
-.logout-btn:hover {
-    background: #c53030;
-}
-
-.dashboard-main {
-    display: flex;
-    height: 100vh;
-    background: transparent;
-    margin-top: 0;
-    padding-top: 80px; /* Height of header */
-    margin-left: 0;
-    overflow: hidden;
-}
-
-.content-area {
-    padding: 80px 80px !important;
-    flex: 1 1 auto;
-    overflow-y: auto;
-    height: calc(100vh - 80px);
-}
-
-.sidebar {
-    width: 270px;
-    background: transparent; /* Dark background */
-    padding-left: 10px;
-    padding-right: 10px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding-top: 20px !important ; /* Height of header */
-    position: fixed;
-    top: 90px;
-    left: 0;
-    overflow: hidden;
-    z-index: 1000;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.08);
-}
-
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1 1 auto;
-    min-height: 0;
-}
-
-.sidebar .nav-item:last-child {
-    margin-bottom: 120px; /* Adds space below the last nav item */
-}
-
-
-.nav-item, .has-submenu {
-    padding: 15px 15px 15px 25px;
-    color: #dbdbdb;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-    border-radius: 8px 8px 8px 8px;
-    cursor: pointer;
-}
-
-.nav-item i, .has-submenu i {
-    min-width: 22px;
-    text-align: center;
-    margin-right: 18px;
-    margin-left: 0;
-    font-size: 18px;
-}
-
-.nav-item:hover {
-    background: #232323;
-    color: #ff9800;
-}
-
-.nav-item.active {
-    background: #232323;
-    color: #ff9800;
-    border-left: 4px solid #ff9800;
-}
-
-/* Dropdown Styles */
-.dropdown {
-    position: relative;
-}
-
-.dropdown-toggle {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 5px;
-    color: #dbdbdb;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-    border-radius: 8px 0 0 8px;
-    cursor: pointer;
-}
-
-.dropdown-toggle:hover {
-    background: #232323;
-    color: #ff9800;
-}
-
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #232323;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    border-radius: 0 0 8px 8px;
-    overflow: hidden;
-    z-index: 1000;
-    min-width: 220px;
-}
-
-.dropdown-menu.show {
-    display: block;
-}
-
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    color: #dbdbdb;
-    text-decoration: none;
-    transition: background 0.3s ease;
-    border-left: 4px solid transparent;
-}
-
-.dropdown-item:hover {
-    background: #ff9800;
-    color: #232323;
-    border-left: 4px solid #232323;
-}
-
-.dropdown-item.active {
-    background: #ff9800;
-    color: #232323;
-    border-left: 4px solid #232323;
-}
-
-.content-area {
-    flex: 1;
-    padding: 50px 250px !important;
-    overflow-y: auto;
-    background: transparent;
-    -webkit-overflow-scrolling: touch;
-    margin-left: 270px;
-}
-
-.section {
-    display: none;
-}
-
-.section.active {
-    display: block;
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideUpFadeIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(50px) scale(0.95); 
+});
+// Delayed hide for notification and profile dropdowns
+document.addEventListener('DOMContentLoaded', function() {
+    function setupDelayedDropdown(dropdownSelector, menuSelector) {
+        document.querySelectorAll(dropdownSelector).forEach(function(dropdown) {
+            let hideTimeout;
+            const menu = dropdown.querySelector(menuSelector);
+            if (!menu) return;
+            dropdown.addEventListener('mouseenter', function() {
+                clearTimeout(hideTimeout);
+                menu.style.display = 'block';
+            });
+            dropdown.addEventListener('mouseleave', function() {
+                hideTimeout = setTimeout(function() {
+                    menu.style.display = 'none';
+                }, 300);
+            });
+            menu.addEventListener('mouseenter', function() {
+                clearTimeout(hideTimeout);
+                menu.style.display = 'block';
+            });
+            menu.addEventListener('mouseleave', function() {
+                hideTimeout = setTimeout(function() {
+                    menu.style.display = 'none';
+                }, 300);
+            });
+        });
     }
-    to { 
-        opacity: 1; 
-        transform: translateY(0) scale(1); 
+    setupDelayedDropdown('.notification-dropdown', '.notification-menu');
+    setupDelayedDropdown('.profile-dropdown', '.profile-menu');
+});
+
+
+// Ensure all submenu carets start pointing right on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.submenu-caret').forEach(function(caret) {
+        caret.classList.add('fa-caret-right');
+    });
+});
+// Toggle sidebar submenu caret icon
+function toggleSidebarSubmenu(event, submenuId) {
+    event.preventDefault();
+    const submenu = document.getElementById(submenuId);
+    const parent = event.currentTarget;
+    const caret = parent.querySelector('.submenu-caret');
+    if (submenu.classList.contains('open')) {
+        submenu.classList.remove('open');
+        parent.classList.remove('active');
+        caret.classList.remove('fa-caret-down');
+        caret.classList.add('fa-caret-right');
+    } else {
+        // Close other submenus
+        document.querySelectorAll('.sidebar-submenu.open').forEach(s => {
+            s.classList.remove('open');
+        });
+        document.querySelectorAll('.has-submenu.active').forEach(a => {
+            a.classList.remove('active');
+        });
+        document.querySelectorAll('.submenu-caret').forEach(caret => {
+            caret.classList.remove('fa-caret-down');
+            caret.classList.add('fa-caret-right');
+        });
+        submenu.classList.add('open');
+        parent.classList.add('active');
+        caret.classList.remove('fa-caret-right');
+        caret.classList.add('fa-caret-down');
+        // Automatically trigger click on the first submenu-item
+        const firstItem = submenu.querySelector('.submenu-item');
+        if (firstItem) {
+            firstItem.click();
+        }
     }
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
 
-@keyframes buttonLoading {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+// Main JavaScript functionality for POS system
 
-@keyframes successCheckmark {
-    0% { 
-        transform: scale(0); 
-        opacity: 0; 
-    }
-    50% { 
-        transform: scale(1.2); 
-        opacity: 1; 
-    }
-    100% { 
-        transform: scale(1); 
-        opacity: 1; 
-    }
-}
-
-/* Stats Grid */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background: #232323;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    transition: transform 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 24px;
-}
-
-.stat-info h3 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #ff9800;
-    margin-bottom: 5px;
-}
-
-.stat-info p {
-    color: #dbdbdb;
-    font-weight: 600;
-}
-
-/* Recent Activities */
-.recent-activities {
-    background: #232323;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-}
-
-.recent-activities h2 {
-    color: #2d3748;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-}
-
-.activities-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.activity-item {
-    padding: 15px;
-    background: #ff9800;
-    border-radius: 10px;
-    border-left: 4px solid #ff9800;
-}
-
-.activity-item p {
-    color: #4a5568;
-    margin: 0;
-}
-
-/* Section Headers */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.section-header h2 {
-    color: #ff9800;
-    font-size: 1.8rem;
-}
-
-.search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.search-box input {
-    padding: 12px 15px 12px 40px;
-    border: 2px solid #333;
-    border-radius: 8px;
-    font-size: 14px;
-    width: 300px;
-    background: #232323;
-    color: #fff;
-}
-
-.search-box i {
-    position: absolute;
-    left: 15px;
-    color: #a0aec0;
-}
-
-/* Tables */
-.inventory-table-container,
-.sales-table-container {
-    background: #2a2a2a;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-    overflow: hidden;
-}
-
-.inventory-table,
-.sales-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.inventory-table th,
-.sales-table th {
-    background: #181818;
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-    color: #ff9800;
-    border-bottom: 2px solid #333;
-}
-
-.inventory-table td,
-.sales-table td {
-    padding: 15px;
-    border-bottom: 1px solid #333;
-    color: #fff;
-}
-
-.inventory-table tr:hover,
-.sales-table tr:hover {
-    background: #2a2a2a;
-}
-
-/* Status Badges */
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-in-stock {
-    background: #c6f6d5;
-    color: #22543d;
-}
-
-.status-low-stock {
-    background: #fed7d7;
-    color: #742a2a;
-}
-
-.status-out-of-stock {
-    background: #e2e8f0;
-    color: #4a5568;
-}
-
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    background: #232323;
-    color: #ff9800;
-}
-
-.btn-edit {
-    background: #ff9800;
-    color: #181818;
-}
-
-.btn-edit:hover {
-    background: #ff5722;
-    color: #fff;
-}
-
-.btn-delete {
-    background: #232323;
-    color: #ff9800;
-    border: 1px solid #ff9800;
-}
-
-.btn-delete:hover {
-    background: #ff5722;
-    color: #fff;
-}
-
-/* Forms */
-.product-form {
-    background: #232323;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.submit-btn {
-    padding: 15px 30px;
-    background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;    
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3);
-    background: linear-gradient(135deg, #ff5722 0%, #ff9800 100%);
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-}
-
-.product-form .form-group input:focus,
-.product-form .form-group select:focus,
-.product-form .form-group textarea:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .login-container {
-        padding-left: 20px;
-        padding-right: 20px;
-        justify-content: center;
-    }
-    
-    .dashboard-main {
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        width: 100%;
-        order: 2;
-    }
-    
-    .content-area {
-        order: 1;
-    }
-    
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .search-box input {
-        width: 100%;
-    }
-    
-    .inventory-table-container,
-    .sales-table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* Toast Notifications */
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 15px 20px;
-    border-radius: 8px;
-    color: white;
-    font-weight: 600;
-    z-index: 1000;
-    animation: slideIn 0.3s ease;
-}
-
-.toast.success {
-    background: #38a169;
-}
-
-.toast.error {
-    background: #e53e3e;
-}
-
-.toast.info {
-    background: #3182ce;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    animation: fadeIn 0.3s ease;
-}
-
-.modal-content {
-    background: #232323;
-    margin: 5% auto;
-    padding: 0;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.modal-header {
-    padding: 20px 30px;
-    border-bottom: 1px solid #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h2 {
-    color: #ff9800;
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.close {
-    color: #dbdbdb;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close:hover {
-    color: #ff9800;
-}
-
-.modal-body {
-    padding: 30px;
-}
-
-.roles-actions {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.roles-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.role-item {
-    background: #181818;
-    padding: 20px;
-    border-radius: 10px;
-    border-left: 4px solid #ff9800;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.role-info h3 {
-    color: #ff9800;
-    margin: 0 0 5px 0;
-    font-size: 1.2rem;
-}
-
-.role-info p {
-    color: #dbdbdb;
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-.role-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
-}
-
-.btn-secondary {
-    background: #232323;
-    color: #ff9800;
-    border: 1px solid #ff9800;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-    background: #ff9800;
-    color: #232323;
-}
-
-.form-actions {
-    display: flex;
-    gap: 15px;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-#role-form .form-group {
-    margin-bottom: 20px;
-}
-
-#role-form label {
-    display: block;
-    color: #dbdbdb;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-#role-form input,
-#role-form textarea {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #333;
-    border-radius: 8px;
-    background: #181818;
-    color: #fff;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-}
-
-#role-form input:focus,
-#role-form textarea:focus {
-    outline: none;
-    border-color: #ff9800;
-    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
-}
-
-#role-form textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-/* Permissions Modal Styles */
-.permissions-content {
-    max-height: 500px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.permissions-section h3 {
-    color: #ff9800;
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-}
-
-.permissions-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.role-permissions {
-    background: #181818;
-    padding: 20px;
-    border-radius: 10px;
-    border-left: 4px solid #ff9800;
-}
-
-.role-permissions h4 {
-    color: #ff9800;
-    margin: 0 0 10px 0;
-    font-size: 1.1rem;
-}
-
-.role-description {
-    color: #dbdbdb;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-}
-
-.permissions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-}
-
-.permission-item {
-    background: #232323;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    transition: all 0.3s ease;
-}
-
-.permission-item:hover {
-    border-color: #ff9800;
-    background: #2a2a2a;
-}
-
-.permission-checkbox {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    cursor: pointer;
-    width: 100%;
-}
-
-.permission-checkbox input[type="checkbox"] {
-    display: none;
-}
-
-.checkmark {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #555;
-    border-radius: 4px;
-    position: relative;
-    flex-shrink: 0;
-    margin-top: 2px;
-    transition: all 0.3s ease;
-}
-
-.permission-checkbox input[type="checkbox"]:checked + .checkmark {
-    background: #ff9800;
-    border-color: #ff9800;
-}
-
-.permission-checkbox input[type="checkbox"]:checked + .checkmark::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #232323;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.permission-info strong {
-    display: block;
-    color: #fff;
-    font-size: 0.95rem;
-    margin-bottom: 4px;
-}
-
-.permission-info small {
-    color: #dbdbdb;
-    font-size: 0.8rem;
-    line-height: 1.3;
-}
-
-.permissions-actions {
-    display: flex;
-    gap: 15px;
-    justify-content: flex-end;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #333;
-}
-
-/* Custom minimal scrollbar for permissions content */
-.permissions-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.permissions-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.permissions-content::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 3px;
-    border: none;
-}
-
-.permissions-content::-webkit-scrollbar-thumb:hover {
-    background: #777;
-}
-
-.permissions-content {
-    scrollbar-width: thin;
-    scrollbar-color: #555 transparent;
-}
-
-/* Responsive Modal */
-@media (max-width: 768px) {
-    .modal-content {
-        width: 95%;
-        margin: 10% auto;
+class POSSystem {
+    constructor() {
+        this.currentSection = 'dashboard';
+        this.cart = []; // Initialize cart array
+        this.initializeEventListeners();
+        this.checkAuthentication();
+        this.disableZoom();
     }
 
-    .modal-header {
-        padding: 15px 20px;
+    disableZoom() {
+        // Prevent zooming using various methods
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent pinch zoom on touch devices
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent double-tap zoom
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+
+        // Disable browser zoom shortcuts
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey === true || e.metaKey === true) && 
+                (e.key === '+' || e.key === '-' || e.key === '=' || e.keyCode === 187 || e.keyCode === 189)) {
+                e.preventDefault();
+            }
+        });
     }
 
-    .modal-body {
-        padding: 20px;
+    initializeEventListeners() {
+        // POS search functionality
+        const posSearchInput = document.getElementById('pos-search');
+        if (posSearchInput) {
+            posSearchInput.addEventListener('input', (e) => this.searchProductsForPOS(e));
+        }
+        // Login form
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+        }
+
+        // Add product form
+        const addProductForm = document.getElementById('add-product-form');
+        if (addProductForm) {
+            addProductForm.addEventListener('submit', (e) => this.handleAddProduct(e));
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('search-inventory');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => this.handleSearch(e));
+        }
     }
 
-    .form-actions {
-        flex-direction: column;
+    checkAuthentication() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        if (currentPage === 'dashboard.html' && !isLoggedIn) {
+            window.location.href = 'index.html';
+        } else if (currentPage === 'index.html' && isLoggedIn) {
+            window.location.href = 'dashboard.html';
+        }
+
+        if (isLoggedIn && currentPage === 'dashboard.html') {
+            this.loadDashboard();
+        }
     }
 
-    .permissions-actions {
-        flex-direction: column;
+    async handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('errorMessage');
+
+        try {
+            const authResult = await dataManager.authenticate(username, password);
+            if (authResult.authenticated) {
+                localStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('loggedInUser', authResult.user);
+                sessionStorage.setItem('userRole', authResult.role);
+                sessionStorage.setItem('employeeId', authResult.employeeId || '');
+                window.location.href = 'dashboard.html';
+            } else {
+                const errorMsg = authResult.reason || 'Invalid username or password';
+                errorMessage.textContent = errorMsg;
+                this.showToast(errorMsg, 'error');
+            }
+        } catch (error) {
+            errorMessage.textContent = 'Authentication error occurred';
+            this.showToast('Authentication error', 'error');
+        }
     }
 
-    .permissions-grid {
-        grid-template-columns: 1fr;
+    logout() {
+        localStorage.removeItem('isLoggedIn');
+        window.location.href = 'index.html';
     }
 
-    .btn {
-        width: 100%;
+
+
+    showSection(sectionId, event) {
+
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Show selected section
+        const targetSection = document.getElementById(`${sectionId}-section`);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+
+        // Update navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelector(`.nav-item[href="#${sectionId}"]`).classList.add('active');
+
+        this.currentSection = sectionId;
+
+        // Load section-specific data
+        switch(sectionId) {
+            case 'dashboard':
+                this.loadDashboard();
+                break;
+            case 'inventory':
+                this.loadInventory();
+                break;
+            case 'sales':
+                this.loadSales();
+                break;
+            case 'sales-report':
+                this.loadSalesReport();
+                break;
+            case 'pos':
+                this.loadPOS();
+                break;
+            case 'audit-logs':
+                loadAuditLogs();
+                break;
+            case 'inventory-reports':
+                this.loadInventoryReports();
+                break;
+        }
+    }
+
+    loadPOS() {
+        // Load products for POS
+        this.loadProductsForPOS();
+    }
+
+    searchProductsForPOS(e) {
+        const query = e.target.value.toLowerCase();
+        const products = dataManager.getProducts();
+        const productGrid = document.getElementById('product-grid');
+        
+        const filteredProducts = products.filter(product =>
+            product.name.toLowerCase().includes(query) ||
+            product.category.toLowerCase().includes(query)
+        );
+        
+        productGrid.innerHTML = filteredProducts.map(product => `
+            <div class="product-item" onclick="addToCart(${product.id})">
+                <h4>${product.name}</h4>
+                <p>Price: $${product.price.toFixed(2)}</p>
+                <p>Stock: ${product.stock}</p>
+            </div>
+        `).join('');
+    }
+
+    loadProductsForPOS() {
+        const products = dataManager.getProducts();
+        const productGrid = document.getElementById('product-grid');
+        
+        productGrid.innerHTML = products.map(product => `
+            <div class="product-item" onclick="addToCart(${product.id})">
+                <h4>${product.name}</h4>
+                <p>Price: $${product.price.toFixed(2)}</p>
+                <p>Stock: ${product.stock}</p>
+            </div>
+        `).join('');
+    }
+
+    loadDashboard() {
+        const stats = dataManager.getStatistics();
+        
+        // Update statistics
+        document.getElementById('total-products').textContent = stats.totalProducts;
+        document.getElementById('total-sales').textContent = stats.totalSales;
+        document.getElementById('low-stock').textContent = stats.lowStockItems;
+        document.getElementById('total-revenue').textContent = `$${stats.totalRevenue.toFixed(2)}`;
+
+        // Load activities
+        this.loadActivities();
+    }
+
+    loadSalesReport() {
+        const sales = dataManager.getSales();
+        const startDateInput = document.getElementById('report-start-date');
+        const endDateInput = document.getElementById('report-end-date');
+        const tableBody = document.getElementById('sales-report-table-body');
+
+        // Parse dates from inputs
+        const startDate = startDateInput && startDateInput.value ? new Date(startDateInput.value) : null;
+        const endDate = endDateInput && endDateInput.value ? new Date(endDateInput.value) : null;
+
+        // Filter sales by date range if specified
+        let filteredSales = sales;
+        if (startDate) {
+            filteredSales = filteredSales.filter(sale => new Date(sale.date) >= startDate);
+        }
+        if (endDate) {
+            filteredSales = filteredSales.filter(sale => new Date(sale.date) <= endDate);
+        }
+
+        // Calculate summary stats
+        const totalTransactions = filteredSales.length;
+        const totalRevenue = filteredSales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+        const averageSale = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+
+        // Calculate top selling product
+        const productSalesCount = {};
+        filteredSales.forEach(sale => {
+            sale.products.forEach(product => {
+                if (!productSalesCount[product.name]) {
+                    productSalesCount[product.name] = 0;
+                }
+                productSalesCount[product.name] += product.quantity;
+            });
+        });
+        const topProduct = Object.entries(productSalesCount).sort((a, b) => b[1] - a[1])[0];
+        const topProductName = topProduct ? topProduct[0] : 'N/A';
+
+        // Update summary UI
+        document.getElementById('total-sales-count').textContent = totalTransactions;
+        document.getElementById('total-sales-revenue').textContent = `$${totalRevenue.toFixed(2)}`;
+        document.getElementById('average-sale').textContent = `$${averageSale.toFixed(2)}`;
+        document.getElementById('top-product').textContent = topProductName;
+
+        // Populate sales report table
+        tableBody.innerHTML = filteredSales.length > 0
+            ? filteredSales.map(sale => `
+                <tr>
+                    <td>${sale.id}</td>
+                    <td>${this.formatDate(sale.date)}</td>
+                    <td>${sale.products.map(p => p.name).join(', ')}</td>
+                    <td>${sale.products.reduce((sum, p) => sum + p.quantity, 0)}</td>
+                    <td>$${sale.totalAmount.toFixed(2)}</td>
+                    <td>${sale.paymentMethod}</td>
+                </tr>
+            `).join('')
+            : '<tr><td colspan="6" style="text-align: center;">No sales data available for the selected period</td></tr>';
+    }
+
+    addToCart(productId) {
+        const product = dataManager.getProducts().find(p => p.id === productId);
+        if (product) {
+            this.cart.push(product);
+            this.updateCart();
+        }
+    }
+
+    updateCart() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        cartItemsContainer.innerHTML = this.cart.map(item => `
+            <div class="cart-item">
+                <span>${item.name}</span>
+                <span>$${item.price.toFixed(2)}</span>
+            </div>
+        `).join('');
+
+        this.updateCartSummary();
+    }
+
+    updateCartSummary() {
+        const subtotal = this.cart.reduce((sum, item) => sum + item.price, 0);
+        const tax = subtotal * 0.08; // 8% tax
+        const total = subtotal + tax;
+
+        document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+        document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+        document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+    }
+
+    loadActivities() {
+        const activities = dataManager.getActivities();
+        const activitiesList = document.getElementById('activities-list');
+        
+        activitiesList.innerHTML = activities.length > 0 
+            ? activities.map(activity => `
+                <div class="activity-item">
+                    <p>${activity.message} - ${this.formatDate(activity.timestamp)}</p>
+                </div>
+            `).join('')
+            : '<p>No recent activities</p>';
+    }
+
+    processPayment(method) {
+        const total = this.cart.reduce((sum, item) => sum + item.price, 0);
+        const sale = {
+            products: this.cart,
+            totalAmount: total,
+            paymentMethod: method
+        };
+        dataManager.addSale(sale);
+        this.cart = []; // Clear cart after payment
+        this.updateCart();
+        this.showToast('Payment processed successfully!', 'success');
+    }
+
+    clearCart() {
+        this.cart = [];
+        this.updateCart();
+    }
+
+    loadInventory() {
+        const products = dataManager.getProducts();
+        const tableBody = document.getElementById('inventory-table-body');
+        
+        tableBody.innerHTML = products.map(product => `
+            <tr>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>$${product.price.toFixed(2)}</td>
+                <td>${product.stock}</td>
+                <td>
+                    <span class="status-badge ${
+                        product.stock === 0 ? 'status-out-of-stock' :
+                        product.stock < 10 ? 'status-low-stock' : 'status-in-stock'
+                    }">
+                        ${product.stock === 0 ? 'Out of Stock' :
+                          product.stock < 10 ? 'Low Stock' : 'In Stock'}
+                    </span>
+                </td>
+                <td class="action-buttons">
+                    <button class="btn btn-edit" onclick="posSystem.editProduct(${product.id})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-delete" onclick="posSystem.deleteProduct(${product.id})">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    handleSearch(e) {
+        const query = e.target.value;
+        const products = dataManager.searchProducts(query);
+        const tableBody = document.getElementById('inventory-table-body');
+        
+        tableBody.innerHTML = products.map(product => `
+            <tr>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>$${product.price.toFixed(2)}</td>
+                <td>${product.stock}</td>
+                <td>
+                    <span class="status-badge ${
+                        product.stock === 0 ? 'status-out-of-stock' :
+                        product.stock < 10 ? 'status-low-stock' : 'status-in-stock'
+                    }">
+                        ${product.stock === 0 ? 'Out of Stock' :
+                          product.stock < 10 ? 'Low Stock' : 'In Stock'}
+                    </span>
+                </td>
+                <td class="action-buttons">
+                    <button class="btn btn-edit" onclick="posSystem.editProduct(${product.id})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-delete" onclick="posSystem.deleteProduct(${product.id})">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    handleAddProduct(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        // Input validation
+        const name = formData.get('name').trim();
+        const category = formData.get('category');
+        const price = parseFloat(formData.get('price'));
+        const stock = parseInt(formData.get('stock'));
+        const description = formData.get('description').trim();
+
+        // Validate required fields
+        if (!name) {
+            this.showToast('Product name is required', 'error');
+            return;
+        }
+
+        if (!category) {
+            this.showToast('Category is required', 'error');
+            return;
+        }
+
+        if (isNaN(price) || price <= 0) {
+            this.showToast('Price must be a positive number', 'error');
+            return;
+        }
+
+        if (isNaN(stock) || stock < 0) {
+            this.showToast('Stock must be a non-negative number', 'error');
+            return;
+        }
+
+        const product = {
+            name,
+            category,
+            price,
+            stock,
+            description
+        };
+
+        try {
+            dataManager.addProduct(product);
+            e.target.reset();
+            this.showToast('Product added successfully!', 'success');
+            this.loadInventory();
+            this.loadDashboard(); // Refresh stats
+        } catch (error) {
+            this.showToast('Error adding product', 'error');
+        }
+    }
+
+    editProduct(id) {
+        const products = dataManager.getProducts();
+        const product = products.find(p => p.id === id);
+        
+        if (product) {
+            const newName = prompt('Enter new product name:', product.name);
+            const newPrice = prompt('Enter new price:', product.price);
+            const newStock = prompt('Enter new stock quantity:', product.stock);
+            
+            if (newName && newPrice && newStock) {
+                // Input validation
+                const name = newName.trim();
+                const price = parseFloat(newPrice);
+                const stock = parseInt(newStock);
+                
+                if (!name) {
+                    this.showToast('Product name is required', 'error');
+                    return;
+                }
+                
+                if (isNaN(price) || price <= 0) {
+                    this.showToast('Price must be a positive number', 'error');
+                    return;
+                }
+                
+                if (isNaN(stock) || stock < 0) {
+                    this.showToast('Stock must be a non-negative number', 'error');
+                    return;
+                }
+                
+                const updates = {
+                    name,
+                    price,
+                    stock
+                };
+                
+                dataManager.updateProduct(id, updates);
+                this.showToast('Product updated successfully!', 'success');
+                this.loadInventory();
+                this.loadDashboard();
+            }
+        }
+    }
+
+    deleteProduct(id) {
+        if (confirm('Are you sure you want to delete this product?')) {
+            const success = dataManager.deleteProduct(id);
+            if (success) {
+                this.showToast('Product deleted successfully!', 'success');
+                this.loadInventory();
+                this.loadDashboard();
+            } else {
+                this.showToast('Error deleting product', 'error');
+            }
+        }
+    }
+
+    loadSales() {
+        const sales = dataManager.getSales();
+        const tableBody = document.getElementById('sales-table-body');
+        
+        tableBody.innerHTML = sales.length > 0 
+            ? sales.map(sale => `
+                <tr>
+                    <td>${sale.id}</td>
+                    <td>${this.formatDate(sale.date)}</td>
+                    <td>
+                        ${sale.products.map(p => 
+                            `${p.quantity}x ${p.name} ($${p.price.toFixed(2)} each)`
+                        ).join('<br>')}
+                    </td>
+                    <td>$${sale.totalAmount.toFixed(2)}</td>
+                    <td>${sale.paymentMethod}</td>
+                </tr>
+            `).join('')
+            : '<tr><td colspan="5" style="text-align: center;">No sales recorded yet</td></tr>';
+    }
+
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    }
+
+    showToast(message, type = 'info') {
+        // Remove existing toasts
+        document.querySelectorAll('.toast').forEach(toast => toast.remove());
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
     }
 }
+
+// Initialize the system
+const posSystem = new POSSystem();
+
+// Global functions for HTML onclick handlers
+function showSection(sectionId) {
+    posSystem.showSection(sectionId);
+}
+
+function logout() {
+    posSystem.logout();
+}
+
+// Initialize dashboard when page loads
+if (window.location.pathname.endsWith('dashboard.html')) {
+    document.addEventListener('DOMContentLoaded', () => {
+        posSystem.showSection('dashboard');
+    });
+}
+
+// Global function for HTML onclick handlers
+function addToCart(productId) {
+    posSystem.addToCart(productId);
+}
+
+// Password toggle function for login page
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.querySelector('.password-toggle');
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('slashed');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.add('slashed');
+    }
+}
+
+// Dropdown toggle function
+function toggleDropdown(event) {
+    event.preventDefault();
+    event.stopPropagation(); // Prevent event bubbling to parent elements
+    const dropdown = event.target.closest('.dropdown');
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+
+    // Close all other dropdowns
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (menu !== dropdownMenu) {
+            menu.classList.remove('show');
+        }
+    });
+
+    // Toggle current dropdown
+    dropdownMenu.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+});
+
+// Employee management functions
+function addEmployee() {
+    showAddEmployeeForm();
+}
+
+function manageEmployees() {
+    const modal = document.getElementById('employee-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        loadEmployees();
+    }
+}
+
+// Access rights management functions
+function manageRoles() {
+    const modal = document.getElementById('roles-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        loadRoles();
+    }
+}
+
+function closeRolesModal() {
+    const modal = document.getElementById('roles-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function showAddRoleForm() {
+    const formModal = document.getElementById('role-form-modal');
+    const formTitle = document.getElementById('role-form-title');
+    const form = document.getElementById('role-form');
+
+    if (formModal && formTitle && form) {
+        formTitle.textContent = 'Add Role';
+        form.reset();
+        form.removeAttribute('data-editing-id');
+        formModal.style.display = 'block';
+    }
+}
+
+function closeRoleFormModal() {
+    const modal = document.getElementById('role-form-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function loadRoles() {
+    const roles = dataManager.getRoles();
+    const rolesList = document.getElementById('roles-list');
+
+    if (rolesList) {
+        rolesList.innerHTML = roles.length > 0
+            ? roles.map(role => `
+                <div class="role-item">
+                    <div class="role-info">
+                        <h3>${role.name}</h3>
+                        <p>${role.description}</p>
+                    </div>
+                    <div class="role-actions">
+                        <button class="btn btn-edit" onclick="editRole(${role.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-delete" onclick="deleteRole(${role.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('')
+            : '<p>No roles found. Click "Add New Role" to create your first role.</p>';
+    }
+}
+
+function editRole(id) {
+    const roles = dataManager.getRoles();
+    const role = roles.find(r => r.id === id);
+
+    if (role) {
+        const formModal = document.getElementById('role-form-modal');
+        const formTitle = document.getElementById('role-form-title');
+        const form = document.getElementById('role-form');
+        const nameInput = document.getElementById('role-name');
+        const descriptionInput = document.getElementById('role-description');
+
+        if (formModal && formTitle && form && nameInput && descriptionInput) {
+            formTitle.textContent = 'Edit Role';
+            nameInput.value = role.name;
+            descriptionInput.value = role.description;
+            form.setAttribute('data-editing-id', id);
+            formModal.style.display = 'block';
+        }
+    }
+}
+
+function deleteRole(id) {
+    const roles = dataManager.getRoles();
+    const role = roles.find(r => r.id === id);
+
+    if (role && confirm(`Are you sure you want to delete the role "${role.name}"?`)) {
+        const success = dataManager.deleteRole(id);
+        if (success) {
+            posSystem.showToast('Role deleted successfully!', 'success');
+            loadRoles();
+        } else {
+            posSystem.showToast('Error deleting role', 'error');
+        }
+    }
+}
+
+function handleRoleFormSubmit(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const editingId = form.getAttribute('data-editing-id');
+    const nameInput = document.getElementById('role-name');
+    const descriptionInput = document.getElementById('role-description');
+
+    if (!nameInput || !descriptionInput) return;
+
+    const name = nameInput.value.trim();
+    const description = descriptionInput.value.trim();
+
+    // Validation
+    if (!name) {
+        posSystem.showToast('Role name is required', 'error');
+        return;
+    }
+
+    if (!description) {
+        posSystem.showToast('Role description is required', 'error');
+        return;
+    }
+
+    const roleData = { name, description };
+
+    try {
+        if (editingId) {
+            // Update existing role
+            const success = dataManager.updateRole(parseInt(editingId), roleData);
+            if (success) {
+                posSystem.showToast('Role updated successfully!', 'success');
+            } else {
+                posSystem.showToast('Error updating role', 'error');
+                return;
+            }
+        } else {
+            // Add new role
+            dataManager.addRole(roleData);
+            posSystem.showToast('Role added successfully!', 'success');
+        }
+
+        closeRoleFormModal();
+        loadRoles();
+    } catch (error) {
+        posSystem.showToast('Error saving role', 'error');
+    }
+}
+
+function setPermissions() {
+    // Open a modal or section for setting permissions (basic implementation)
+    const modal = document.getElementById('permissions-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        loadPermissions();
+    } else {
+        alert('Permissions modal not found. Please add the modal HTML.');
+    }
+}
+
+// Close permissions modal
+function closePermissionsModal() {
+    const modal = document.getElementById('permissions-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Load permissions data
+function loadPermissions() {
+    const permissionsList = document.getElementById('permissions-list');
+    if (permissionsList) {
+        const permissions = dataManager.getPermissions();
+        const roles = dataManager.getRoles();
+
+        if (roles.length === 0) {
+            permissionsList.innerHTML = '<p>No roles available. Please create roles first.</p>';
+            return;
+        }
+
+        // Create permissions interface for each role
+        permissionsList.innerHTML = roles.map(role => {
+            const rolePermissions = dataManager.getPermissionsByRole(role.id);
+
+            return `
+                <div class="role-permissions">
+                    <h4>${role.name}</h4>
+                    <p class="role-description">${role.description}</p>
+                    <div class="permissions-grid">
+                        ${permissions.map(permission => `
+                            <div class="permission-item">
+                                <label class="permission-checkbox">
+                                    <input type="checkbox"
+                                           id="perm-${role.id}-${permission.id}"
+                                           data-role-id="${role.id}"
+                                           data-permission-id="${permission.id}"
+                                           ${rolePermissions.includes(permission.id) ? 'checked' : ''}>
+                                    <span class="checkmark"></span>
+                                    <div class="permission-info">
+                                        <strong>${permission.name}</strong>
+                                        <small>${permission.description}</small>
+                                    </div>
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+// Save permissions
+function savePermissions() {
+    const checkboxes = document.querySelectorAll('#permissions-list input[type="checkbox"]');
+    const rolePermissionsMap = {};
+
+    // Group permissions by role
+    checkboxes.forEach(checkbox => {
+        const roleId = parseInt(checkbox.getAttribute('data-role-id'));
+        const permissionId = parseInt(checkbox.getAttribute('data-permission-id'));
+
+        if (!rolePermissionsMap[roleId]) {
+            rolePermissionsMap[roleId] = [];
+        }
+
+        if (checkbox.checked) {
+            rolePermissionsMap[roleId].push(permissionId);
+        }
+    });
+
+    // Save permissions for each role
+    let successCount = 0;
+    for (const [roleId, permissionIds] of Object.entries(rolePermissionsMap)) {
+        const success = dataManager.updateRolePermissions(parseInt(roleId), permissionIds);
+        if (success) {
+            successCount++;
+        }
+    }
+
+    if (successCount === Object.keys(rolePermissionsMap).length) {
+        posSystem.showToast('Permissions updated successfully!', 'success');
+        closePermissionsModal();
+    } else {
+        posSystem.showToast('Error updating some permissions', 'error');
+    }
+}
+
+// Initialize permissions modal event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const permissionsModal = document.getElementById('permissions-modal');
+    if (permissionsModal) {
+        permissionsModal.querySelector('.close').addEventListener('click', closePermissionsModal);
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === permissionsModal) {
+            closePermissionsModal();
+        }
+    });
+});
+
+// Audit logs functions
+function loadAuditLogs() {
+    // Load audit logs data
+    const auditLogs = dataManager.getAuditLogs();
+    const tableBody = document.getElementById('audit-logs-table-body');
+
+    tableBody.innerHTML = auditLogs.length > 0
+        ? auditLogs.map(log => `
+            <tr>
+                <td>${posSystem.formatDate(log.timestamp)}</td>
+                <td>${log.user}</td>
+                <td>${log.action}</td>
+                <td>${log.details}</td>
+                <td>${log.ipAddress || 'N/A'}</td>
+            </tr>
+        `).join('')
+        : '<tr><td colspan="5" style="text-align: center;">No audit logs available</td></tr>';
+}
+
+function filterAuditLogs() {
+    const filter = document.getElementById('audit-log-filter').value;
+    const dateFrom = document.getElementById('audit-log-date-from').value;
+    const dateTo = document.getElementById('audit-log-date-to').value;
+
+    let filteredLogs = dataManager.getAuditLogs();
+
+    // Filter by type
+    if (filter !== 'all') {
+        filteredLogs = filteredLogs.filter(log => log.type === filter);
+    }
+
+    // Filter by date range
+    if (dateFrom) {
+        filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= new Date(dateFrom));
+    }
+    if (dateTo) {
+        filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= new Date(dateTo));
+    }
+
+    const tableBody = document.getElementById('audit-logs-table-body');
+    tableBody.innerHTML = filteredLogs.length > 0
+        ? filteredLogs.map(log => `
+            <tr>
+                <td>${posSystem.formatDate(log.timestamp)}</td>
+                <td>${log.user}</td>
+                <td>${log.action}</td>
+                <td>${log.details}</td>
+                <td>${log.ipAddress || 'N/A'}</td>
+            </tr>
+        `).join('')
+        : '<tr><td colspan="5" style="text-align: center;">No audit logs match the filter criteria</td></tr>';
+
+    posSystem.showToast(`Filtered to ${filteredLogs.length} audit log entries`, 'info');
+}
+
+function exportAuditLogs() {
+    const auditLogs = dataManager.getAuditLogs();
+    if (auditLogs.length === 0) {
+        posSystem.showToast('No audit logs to export', 'warning');
+        return;
+    }
+
+    // Create CSV content
+    const headers = ['Timestamp', 'User', 'Action', 'Details', 'IP Address'];
+    const csvContent = [
+        headers.join(','),
+        ...auditLogs.map(log => [
+            `"${posSystem.formatDate(log.timestamp)}"`,
+            `"${log.user}"`,
+            `"${log.action}"`,
+            `"${log.details}"`,
+            `"${log.ipAddress || 'N/A'}"`
+        ].join(','))
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `audit-logs-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    posSystem.showToast('Audit logs exported successfully!', 'success');
+}
+
+// Initialize role form event listener
+document.addEventListener('DOMContentLoaded', function() {
+    const roleForm = document.getElementById('role-form');
+    if (roleForm) {
+        roleForm.addEventListener('submit', handleRoleFormSubmit);
+    }
+
+    // Close modals when clicking outside
+    window.addEventListener('click', function(event) {
+        const rolesModal = document.getElementById('roles-modal');
+        const roleFormModal = document.getElementById('role-form-modal');
+
+        if (event.target === rolesModal) {
+            closeRolesModal();
+        }
+        if (event.target === roleFormModal) {
+            closeRoleFormModal();
+        }
+    });
+});
+
+// Employee management functions
+function addEmployee() {
+    showAddEmployeeForm();
+}
+
+function manageEmployees() {
+    const modal = document.getElementById('employee-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        loadEmployees();
+    }
+}
+
+function closeEmployeeModal() {
+    const modal = document.getElementById('employee-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function showAddEmployeeForm() {
+    const formModal = document.getElementById('employee-form-modal');
+    const formTitle = document.getElementById('employee-form-title');
+    const form = document.getElementById('employee-form');
+
+    if (formModal && formTitle && form) {
+        formTitle.textContent = 'Add Employee';
+        form.reset();
+        form.removeAttribute('data-editing-id');
+        formModal.style.display = 'block';
+    }
+}
+
+function closeEmployeeFormModal() {
+    const modal = document.getElementById('employee-form-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function loadEmployees() {
+    const employees = dataManager.getEmployees();
+    const employeesList = document.getElementById('employees-list');
+
+    if (employeesList) {
+        employeesList.innerHTML = employees.length > 0
+            ? employees.map(employee => `
+                <div class="employee-item">
+                    <div class="employee-info">
+                        <h3>${employee.name}</h3>
+                        <p><strong>Email:</strong> ${employee.email}</p>
+            <p><strong>Role:</strong> ${employee.role}</p>
+            <p><strong>Status:</strong> <span class="status-${employee.status.toLowerCase()}">${employee.status}</span></p>
+            <p><strong>Hire Date:</strong> ${posSystem.formatDate(employee.hireDate)}</p>
+                    </div>
+                    <div class="employee-actions">
+                        <button class="btn btn-edit" onclick="editEmployee(${employee.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-delete" onclick="deleteEmployee(${employee.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('')
+            : '<p>No employees found. Click "Add New Employee" to create your first employee record.</p>';
+    }
+}
+
+function editEmployee(id) {
+    const employees = dataManager.getEmployees();
+    const employee = employees.find(e => e.id === id);
+
+    if (employee) {
+        const formModal = document.getElementById('employee-form-modal');
+        const formTitle = document.getElementById('employee-form-title');
+        const form = document.getElementById('employee-form');
+
+        if (formModal && formTitle && form) {
+            formTitle.textContent = 'Edit Employee';
+            form.setAttribute('data-editing-id', id);
+
+            // Populate form fields in arranged order
+            document.getElementById('employee-name').value = employee.name;
+            document.getElementById('employee-email').value = employee.email;
+            document.getElementById('employee-phone').value = employee.phone;
+            document.getElementById('employee-role').value = employee.role;
+            document.getElementById('employee-status').value = employee.status;
+
+            // Adjust color of status field based on status value
+            const statusField = document.getElementById('employee-status');
+            if (statusField) {
+                switch (employee.status.toLowerCase()) {
+                    case 'active':
+                        statusField.style.color = 'green';
+                        break;
+                    case 'inactive':
+                        statusField.style.color = 'red';
+                        break;
+                    case 'on leave':
+                        statusField.style.color = 'orange';
+                        break;
+                    default:
+                        statusField.style.color = 'black';
+                }
+            }
+
+            formModal.style.display = 'block';
+        }
+    }
+}
+
+function deleteEmployee(id) {
+    const employees = dataManager.getEmployees();
+    const employee = employees.find(e => e.id === id);
+
+    if (employee && confirm(`Are you sure you want to delete the employee "${employee.name}"?`)) {
+        const success = dataManager.deleteEmployee(id);
+        if (success) {
+            posSystem.showToast('Employee deleted successfully!', 'success');
+            loadEmployees();
+        } else {
+            posSystem.showToast('Error deleting employee', 'error');
+        }
+    }
+}
+
+function handleEmployeeFormSubmit(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const editingId = form.getAttribute('data-editing-id');
+
+    // Get form values
+    const name = document.getElementById('employee-name').value.trim();
+    const email = document.getElementById('employee-email').value.trim();
+    const role = document.getElementById('employee-role').value;
+    const phone = document.getElementById('employee-phone').value.trim();
+    const status = document.getElementById('employee-status').value;
+
+    // Validation
+    if (!name) {
+        posSystem.showToast('Employee name is required', 'error');
+        return;
+    }
+
+    if (!email) {
+        posSystem.showToast('Email is required', 'error');
+        return;
+    }
+
+    if (!role) {
+        posSystem.showToast('Role is required', 'error');
+        return;
+    }
+
+    if (!phone) {
+        posSystem.showToast('Phone number is required', 'error');
+        return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        posSystem.showToast('Please enter a valid email address', 'error');
+        return;
+    }
+
+    const employeeData = { name, email, role, phone, status };
+
+    try {
+        if (editingId) {
+            // Update existing employee
+            const success = dataManager.updateEmployee(parseInt(editingId), employeeData);
+            if (success) {
+                posSystem.showToast('Employee updated successfully!', 'success');
+            } else {
+                posSystem.showToast('Error updating employee', 'error');
+                return;
+            }
+        } else {
+            // Add new employee
+            dataManager.addEmployee(employeeData);
+            posSystem.showToast('Employee added successfully!', 'success');
+        }
+
+        closeEmployeeFormModal();
+        loadEmployees();
+    } catch (error) {
+        posSystem.showToast('Error saving employee', 'error');
+    }
+}
+
+// Initialize employee form event listener
+document.addEventListener('DOMContentLoaded', function() {
+    const employeeForm = document.getElementById('employee-form');
+    if (employeeForm) {
+        employeeForm.addEventListener('submit', handleEmployeeFormSubmit);
+    }
+
+    // Close employee modals when clicking outside
+    window.addEventListener('click', function(event) {
+        const employeeModal = document.getElementById('employee-modal');
+        const employeeFormModal = document.getElementById('employee-form-modal');
+
+        if (event.target === employeeModal) {
+            closeEmployeeModal();
+        }
+        if (event.target === employeeFormModal) {
+            closeEmployeeFormModal();
+        }
+    });
+
+    // --- Restore sidebar submenu caret toggle ---
+    document.querySelectorAll('.has-subzmenu').forEach(function(menu) {
+        menu.addEventListener('click', function(e) {
+            // Only to  ggle if clicking the menu itself, not a submenu item
+            if (e.target.closest('.submenu-item')) return;
+            // Close other open submenus (optional, comment out if not needed)
+            document.querySelectorAll('.has-submenu.open').forEach(function(openMenu) {
+                if (openMenu !== menu) {
+                    openMenu.classList.remove('open');
+                    var openSub = openMenu.querySelector('.sidebar-submenu');
+                    if (openSub) openSub.classList.remove('open');
+                }
+            });
+            // Toggle open class on this menu and its submenu
+            menu.classList.toggle('open');
+            var submenu = menu.querySelector('.sidebar-submenu');
+            if (submenu) submenu.classList.toggle('open');
+        });
+    });
+});
