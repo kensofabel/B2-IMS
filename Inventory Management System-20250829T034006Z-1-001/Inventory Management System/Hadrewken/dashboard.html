@@ -183,6 +183,12 @@
                                 <input type="text" id="product-name" name="name" required>
                             </div>
                             <div class="form-group">
+                                <label for="product-sku">SKU</label>
+                                <input type="text" id="product-sku" name="sku" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
                                 <label for="product-category">Category</label>
                                 <select id="product-category" name="category" required>
                                     <option value="">Select Category</option>
@@ -196,6 +202,10 @@
                                     <option value="Household">Household</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="product-brand">Brand</label>
+                                <input type="text" id="product-brand" name="brand" required>
+                            </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
@@ -205,6 +215,26 @@
                             <div class="form-group">
                                 <label for="product-stock">Initial Stock</label>
                                 <input type="number" id="product-stock" name="stock" min="0" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-supplier">Supplier</label>
+                                <input type="text" id="product-supplier" name="supplier" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-barcode">Barcode</label>
+                                <input type="text" id="product-barcode" name="barcode" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-reorder-point">Reorder Point</label>
+                                <input type="number" id="product-reorder-point" name="reorderPoint" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-low-stock-threshold">Low Stock Threshold</label>
+                                <input type="number" id="product-low-stock-threshold" name="lowStockThreshold" min="0" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -288,12 +318,6 @@
                 </section>
 
                 <!-- Inventory Reports Section -->
-                <section id="inventory-reports-section" class="section">
-                    <div class="section-header">
-                        <h2>Inventory Reports</h2>
-                    </div>
-                    <div class="report-content">
-                        <!-- Inventory Reports Section -->
                 <section id="inventory-reports-section" class="section">
                     <div class="section-header">
                         <h2>Inventory Reports</h2>
@@ -412,6 +436,123 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Settings Section -->
+                <section id="settings-section" class="section">
+                    <div class="section-header">
+                        <h2>Core Inventory Settings</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-grid">
+                            <div class="settings-card">
+                                <h3><i class="fas fa-boxes"></i> Inventory Settings</h3>
+                                <form id="inventory-settings-form" class="settings-form">
+                                    <div class="form-group">
+                                        <label for="global-low-stock-threshold">Global Low Stock Threshold</label>
+                                        <input type="number" id="global-low-stock-threshold" name="globalLowStockThreshold" min="0" value="10">
+                                        <small>Default threshold for all products</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="auto-reorder">Auto Reorder Enabled</label>
+                                        <input type="checkbox" id="auto-reorder" name="autoReorder">
+                                        <small>Automatically reorder when stock is low</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="barcode-format">Barcode Format</label>
+                                        <select id="barcode-format" name="barcodeFormat">
+                                            <option value="ean13">EAN-13</option>
+                                            <option value="code128">Code 128</option>
+                                            <option value="upc">UPC</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="settings-card">
+                                <h3><i class="fas fa-tags"></i> Product Categories</h3>
+                                <div class="categories-list" id="categories-list">
+                                    <div class="category-item">
+                                        <span>Fruits & Vegetables</span>
+                                        <button class="btn btn-small btn-danger" onclick="removeCategory('Fruits & Vegetables')">Remove</button>
+                                    </div>
+                                    <div class="category-item">
+                                        <span>Dairy & Eggs</span>
+                                        <button class="btn btn-small btn-danger" onclick="removeCategory('Dairy & Eggs')">Remove</button>
+                                    </div>
+                                    <div class="category-item">
+                                        <span>Meat & Poultry</span>
+                                        <button class="btn btn-small btn-danger" onclick="removeCategory('Meat & Poultry')">Remove</button>
+                                    </div>
+                                    <div class="category-item">
+                                        <span>Bakery</span>
+                                        <button class="btn btn-small btn-danger" onclick="removeCategory('Bakery')">Remove</button>
+                                    </div>
+                                </div>
+                                <div class="add-category-form">
+                                    <input type="text" id="new-category" placeholder="New category name">
+                                    <button class="btn btn-primary btn-small" onclick="addCategory()">Add Category</button>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <h3><i class="fas fa-truck"></i> Supplier Management</h3>
+                                <div class="suppliers-list" id="suppliers-list">
+                                    <div class="supplier-item">
+                                        <span>Local Orchard Co.</span>
+                                        <button class="btn btn-small btn-edit" onclick="editSupplier('Local Orchard Co.')">Edit</button>
+                                        <button class="btn btn-small btn-danger" onclick="removeSupplier('Local Orchard Co.')">Remove</button>
+                                    </div>
+                                    <div class="supplier-item">
+                                        <span>Fresh Dairy Farms</span>
+                                        <button class="btn btn-small btn-edit" onclick="editSupplier('Fresh Dairy Farms')">Edit</button>
+                                        <button class="btn btn-small btn-danger" onclick="removeSupplier('Fresh Dairy Farms')">Remove</button>
+                                    </div>
+                                </div>
+                                <div class="add-supplier-form">
+                                    <input type="text" id="new-supplier" placeholder="New supplier name">
+                                    <button class="btn btn-primary btn-small" onclick="addSupplier()">Add Supplier</button>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <h3><i class="fas fa-chart-bar"></i> Reporting Settings</h3>
+                                <form id="reporting-settings-form" class="settings-form">
+                                    <div class="form-group">
+                                        <label for="report-frequency">Report Generation Frequency</label>
+                                        <select id="report-frequency" name="reportFrequency">
+                                            <option value="daily">Daily</option>
+                                            <option value="weekly">Weekly</option>
+                                            <option value="monthly">Monthly</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="auto-reports">Auto-Generate Reports</label>
+                                        <input type="checkbox" id="auto-reports" name="autoReports" checked>
+                                        <small>Automatically generate reports based on frequency</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="low-stock-alerts">Low Stock Alerts</label>
+                                        <input type="checkbox" id="low-stock-alerts" name="lowStockAlerts" checked>
+                                        <small>Send alerts when products are low in stock</small>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="settings-actions">
+                            <button class="btn btn-primary" onclick="saveSettings()">
+                                <i class="fas fa-save"></i> Save All Settings
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetSettings()">
+                                <i class="fas fa-undo"></i> Reset to Defaults
+                            </button>
+                            <button class="btn btn-success" onclick="exportSettings()">
+                                <i class="fas fa-download"></i> Export Settings
+                            </button>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
@@ -490,20 +631,7 @@
     </div>
 
     
-// Employee management functions
-function addEmployee() {
-    showAddEmployeeForm();
-}
-
-function manageEmployees() {
-    const modal = document.getElementById('employee-modal');
-    if (modal) {
-        modal.style.display = 'block';
-        loadEmployees();
-    }
-}
-Andrew
-<!-- Employee Management Modal -->
+    <!-- Employee Management Modal -->
     <div id="employee-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
