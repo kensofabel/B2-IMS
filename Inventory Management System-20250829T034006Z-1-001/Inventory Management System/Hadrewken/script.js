@@ -1,6 +1,6 @@
 // Delegated event: close all open submenus and reset carets when clicking a major nav item
 document.addEventListener('DOMContentLoaded', function() {
-    const sidebarNav = document.querySelector('.sidebar-nav');
+    const sidebarNav = document.querySelector('.sidebar');
     if (sidebarNav) {
         sidebarNav.addEventListener('click', function(e) {
             // Only act if clicking a major nav item (not a submenu item or submenu toggle)
@@ -1255,3 +1255,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
