@@ -491,7 +491,7 @@ body::before {
 }
 
 .dashboard-header {
-    background: transparent;
+    background: #ff990048; /* Same as sidebar */
     padding: 23px 40px;
     display: flex;
     justify-content: space-between;
@@ -501,6 +501,8 @@ body::before {
     left: 0;
     width: 100%;
     z-index: 1100;
+    /* Optional: add box-shadow for depth */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 /* Ensure main content is not hidden under fixed header */
 .dashboard-main {
@@ -550,7 +552,8 @@ body::before {
 }
 
 .content-area {
-    margin-left: 350px !important;
+    margin-left: 550px !important;
+    margin-right: 200px !important;
     padding: 80px 80px !important;
     flex: 1 1 auto;
     overflow-y: auto;
@@ -567,7 +570,7 @@ body::before {
     flex-direction: column;
     padding-top: 20px !important ; /* Height of header */
     position: fixed;
-    top: 0;
+    top: 87px;
     left: 0;
     overflow: hidden;
     z-index: 1000;
@@ -581,10 +584,6 @@ body::before {
     gap: 4px;
     flex: 1 1 auto;
     min-height: 0;
-}
-
-.sidebar .nav-item:first-child {
-    margin-top: 140px;
 }
 
 .sidebar .nav-item:last-child {
@@ -859,7 +858,7 @@ body::before {
     border: 2px solid #333;
     border-radius: 8px;
     font-size: 14px;
-    width: 250px;
+    width: 300px;
     background: #232323;
     color: #fff;
 }
