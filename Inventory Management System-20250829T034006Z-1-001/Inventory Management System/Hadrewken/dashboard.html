@@ -242,10 +242,48 @@
                 <section id="sales-report-section" class="section">
                     <div class="section-header">
                         <h2>Sales Report</h2>
+                        <div class="report-filters">
+                            <input type="date" id="report-start-date">
+                            <input type="date" id="report-end-date">
+                            <button class="btn btn-primary" onclick="generateSalesReport()">
+                                <i class="fas fa-chart-line"></i> Generate Report
+                            </button>
+                        </div>
                     </div>
-                    <div class="report-content">
-                        <p>Sales report content will be displayed here.</p>
-                        <!-- Add sales report specific content -->
+                    <div class="report-summary">
+                        <div class="summary-card">
+                            <h3 id="total-sales-count">0</h3>
+                            <p>Total Transactions</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="total-sales-revenue">$0.00</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="average-sale">$0.00</h3>
+                            <p>Average Sale</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="top-product">N/A</h3>
+                            <p>Top Selling Product</p>
+                        </div>
+                    </div>
+                    <div class="sales-report-table-container">
+                        <table class="sales-report-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Date & Time</th>
+                                    <th>Products</th>
+                                    <th>Quantity</th>
+                                    <th>Total Amount</th>
+                                    <th>Payment Method</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-report-table-body">
+                                <!-- Sales report data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
@@ -255,8 +293,28 @@
                         <h2>Inventory Reports</h2>
                     </div>
                     <div class="report-content">
-                        <p>Inventory reports content will be displayed here.</p>
-                        <!-- Add inventory reports specific content -->
+                        <!-- Inventory Reports Section -->
+                <section id="inventory-reports-section" class="section">
+                    <div class="section-header">
+                        <h2>Inventory Reports</h2>
+                    </div>
+                    <div class="report-content">
+                        <div class="inventory-report-table-container">
+                            <table class="inventory-report-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-report-table-body">
+                                    <!-- Inventory report data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
 
@@ -427,6 +485,86 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    
+// Employee management functions
+function addEmployee() {
+    showAddEmployeeForm();
+}
+
+function manageEmployees() {
+    const modal = document.getElementById('employee-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        loadEmployees();
+    }
+}
+Andrew
+<!-- Employee Management Modal -->
+    <div id="employee-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage Employees</h2>
+                <span class="close" onclick="closeEmployeeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="employee-actions">
+                    <button class="btn btn-primary" onclick="showAddEmployeeForm()">
+                        <i class="fas fa-plus"></i> Add New Employee
+                    </button>
+                </div>
+                <div id="employees-list" class="employees-list">
+                    <!-- Employee list will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Employee Form Modal -->
+    <div id="employee-form-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="employee-form-title">Add Employee</h2>
+                <span class="close" onclick="closeEmployeeFormModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="employee-form">
+                    <div class="form-group">
+                        <label for="employee-name">Name</label>
+                        <input type="text" id="employee-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-email">Email</label>
+                        <input type="email" id="employee-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-phone">Phone</label>
+                        <input type="text" id="employee-phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-role">Role</label>
+                        <select id="employee-role" name="role" required>
+                            <option value="">Select Role</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-status">Status</label>
+                        <select id="employee-status" name="status" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="On Leave">On Leave</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Employee</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeEmployeeFormModal()">Cancel</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
