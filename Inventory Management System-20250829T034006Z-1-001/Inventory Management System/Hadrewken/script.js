@@ -1255,4 +1255,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
