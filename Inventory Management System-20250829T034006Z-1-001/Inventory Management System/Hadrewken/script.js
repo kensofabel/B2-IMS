@@ -639,6 +639,42 @@ class POSSystem {
             toast.remove();
         }, 3000);
     }
+
+    loadInventoryReports() {
+        // Load inventory reports data
+        const products = dataManager.getProducts();
+        const tableBody = document.getElementById('inventory-reports-table-body');
+
+        if (tableBody) {
+            tableBody.innerHTML = products.length > 0
+                ? products.map(product => `
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.category}</td>
+                        <td>$${product.price.toFixed(2)}</td>
+                        <td>${product.stock}</td>
+                        <td>$${(product.price * product.stock).toFixed(2)}</td>
+                        <td>${this.formatDate(new Date())}</td>
+                    </tr>
+                `).join('')
+                : '<tr><td colspan="7" style="text-align center;">No inventory data available</td></tr>';
+        }
+
+        // Calculate summary statistics
+        const totalValue = products.reduce((sum, product) => sum + (product.price * product.stock), 0);
+        const totalItems = products.reduce((sum, product) => sum + product.stock, 0);
+        const lowStockItems = products.filter(product => product.stock < 10).length;
+        const outOfStockItems = products.filter(product => product.stock === 0).length;
+
+        // Update summary UI
+        document.getElementById('total-inventory-value').textContent = `$${totalValue.toFixed(2)}`;
+        document.getElementById('total-inventory-items').textContent = totalItems;
+        document.getElementById('low-stock-count').textContent = lowStockItems;
+        document.getElementById('out-of-stock-count').textContent = outOfStockItems;
+
+        this.showToast('Inventory reports loaded successfully!', 'success');
+    }
 }
 
 // Initialize the system
