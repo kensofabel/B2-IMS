@@ -931,6 +931,9 @@ class POSSystem {
         document.getElementById('maintenance-schedule').value = settings.maintenanceSchedule || 'weekly';
         document.getElementById('workflow-automation').value = settings.workflowAutomation || 'false';
 
+        // Update completion status
+        this.updateSettingsCompletion();
+
         this.showToast('Settings loaded successfully!', 'success');
     }
 
@@ -1007,6 +1010,210 @@ class POSSystem {
         const activeButton = document.querySelector(`.tab-btn[onclick="showSettingsTab('${tabName}')"]`);
         if (activeButton) {
             activeButton.classList.add('active');
+        }
+    }
+
+    updateSettingsCompletion() {
+        // Calculate completion percentage based on filled settings
+        const settings = dataManager.getSettings();
+        let filledFields = 0;
+        let totalFields = 0;
+
+        // Basic settings (8 fields)
+        const basicFields = ['businessName', 'storeAddress', 'storePhone', 'storeEmail', 'currencySymbol', 'taxRate', 'storeHours', 'loyaltyProgram'];
+        basicFields.forEach(field => {
+            totalFields++;
+            if (settings[field] && settings[field] !== '') filledFields++;
+        });
+
+        // Inventory settings (5 fields)
+        const inventoryFields = ['lowStockThreshold', 'defaultReorderPoint', 'autoReorder', 'barcodeScanning', 'inventoryCategories'];
+        inventoryFields.forEach(field => {
+            totalFields++;
+            if (settings[field] !== undefined && settings[field] !== null && settings[field] !== '') filledFields++;
+        });
+
+        // Advanced settings (5 fields)
+        const advancedFields = ['debugMode', 'performanceMonitoring', 'databaseOptimization', 'maintenanceSchedule', 'workflowAutomation'];
+        advancedFields.forEach(field => {
+            totalFields++;
+            if (settings[field] !== undefined && settings[field] !== null && settings[field] !== '') filledFields++;
+        });
+
+        const completionPercentage = Math.round((filledFields / totalFields) * 100);
+
+        // Update UI
+        const completionElement = document.getElementById('settings-completion-percentage');
+        const progressBar = document.getElementById('settings-progress-bar');
+
+        if (completionElement) {
+            completionElement.textContent = `${completionPercentage}%`;
+        }
+
+        if (progressBar) {
+            progressBar.style.width = `${completionPercentage}%`;
+            progressBar.className = `progress-fill ${completionPercentage === 100 ? 'complete' : completionPercentage >= 75 ? 'good' : completionPercentage >= 50 ? 'moderate' : 'low'}`;
+        }
+    }
+
+    filterSettings() {
+        const searchTerm = document.getElementById('settings-search').value.toLowerCase();
+        const settingCards = document.querySelectorAll('.setting-card');
+
+        settingCards.forEach(card => {
+            const cardText = card.textContent.toLowerCase();
+            const isVisible = cardText.includes(searchTerm);
+            card.style.display = isVisible ? 'block' : 'none';
+        });
+
+        // Update card count
+        const visibleCards = document.querySelectorAll('.setting-card[style*="display: block"], .setting-card:not([style*="display"])');
+        const totalCards = settingCards.length;
+        const countElement = document.getElementById('settings-card-count');
+
+        if (countElement) {
+            countElement.textContent = `Showing ${visibleCards.length} of ${totalCards} settings`;
+        }
+    }
+
+    expandAllCards() {
+        const settingCards = document.querySelectorAll('.setting-card');
+        settingCards.forEach(card => {
+            card.classList.add('expanded');
+        });
+
+        // Update button states
+        const expandBtn = document.getElementById('expand-all-btn');
+        const collapseBtn = document.getElementById('collapse-all-btn');
+
+        if (expandBtn) expandBtn.classList.add('active');
+        if (collapseBtn) collapseBtn.classList.remove('active');
+    }
+
+    collapseAllCards() {
+        const settingCards = document.querySelectorAll('.setting-card');
+        settingCards.forEach(card => {
+            card.classList.remove('expanded');
+        });
+
+        // Update button states
+        const expandBtn = document.getElementById('expand-all-btn');
+        const collapseBtn = document.getElementById('collapse-all-btn');
+
+        if (expandBtn) expandBtn.classList.remove('active');
+        if (collapseBtn) collapseBtn.classList.add('active');
+    }
+
+    showSettingsHelp() {
+        const helpModal = document.getElementById('settings-help-modal');
+        if (helpModal) {
+            helpModal.style.display = 'block';
+        } else {
+            // Create help modal if it doesn't exist
+            this.createSettingsHelpModal();
+        }
+    }
+
+    createSettingsHelpModal() {
+        const modal = document.createElement('div');
+        modal.id = 'settings-help-modal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content help-modal">
+                <div class="modal-header">
+                    <h2><i class="fas fa-question-circle"></i> Settings Help</h2>
+                    <span class="close" onclick="document.getElementById('settings-help-modal').style.display='none'">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="help-section">
+                        <h3>Basic Settings</h3>
+                        <ul>
+                            <li><strong>Business Name:</strong> Your store's official name</li>
+                            <li><strong>Store Address:</strong> Complete address for receipts and records</li>
+                            <li><strong>Store Phone:</strong> Contact number for customers</li>
+                            <li><strong>Store Email:</strong> Email for business communications</li>
+                            <li><strong>Currency Symbol:</strong> Symbol for your local currency</li>
+                            <li><strong>Tax Rate:</strong> Default tax percentage for sales</li>
+                            <li><strong>Store Hours:</strong> Operating hours for reference</li>
+                            <li><strong>Loyalty Program:</strong> Enable/disable customer loyalty features</li>
+                        </ul>
+                    </div>
+                    <div class="help-section">
+                        <h3>Inventory Settings</h3>
+                        <ul>
+                            <li><strong>Low Stock Threshold:</strong> Minimum stock level before alert</li>
+                            <li><strong>Default Reorder Point:</strong> Suggested reorder quantity</li>
+                            <li><strong>Auto Reorder:</strong> Automatic reorder when stock is low</li>
+                            <li><strong>Barcode Scanning:</strong> Enable barcode scanner support</li>
+                            <li><strong>Inventory Categories:</strong> Product categories for organization</li>
+                        </ul>
+                    </div>
+                    <div class="help-section">
+                        <h3>Advanced Settings</h3>
+                        <ul>
+                            <li><strong>Debug Mode:</strong> Enable detailed logging for troubleshooting</li>
+                            <li><strong>Performance Monitoring:</strong> Track system performance metrics</li>
+                            <li><strong>Database Optimization:</strong> Automatic database maintenance</li>
+                            <li><strong>Maintenance Schedule:</strong> When to run system maintenance</li>
+                            <li><strong>Workflow Automation:</strong> Automate repetitive tasks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        modal.style.display = 'block';
+    }
+
+    initializeTooltips() {
+        // Initialize tooltips for settings elements
+        const tooltipElements = document.querySelectorAll('[data-tooltip]');
+
+        tooltipElements.forEach(element => {
+            element.addEventListener('mouseenter', (e) => this.showTooltip(e));
+            element.addEventListener('mouseleave', () => this.hideTooltip());
+        });
+    }
+
+    showTooltip(event) {
+        const element = event.target;
+        const tooltipText = element.getAttribute('data-tooltip');
+
+        if (!tooltipText) return;
+
+        // Remove existing tooltips
+        this.hideTooltip();
+
+        // Create tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.textContent = tooltipText;
+
+        document.body.appendChild(tooltip);
+
+        // Position tooltip
+        const rect = element.getBoundingClientRect();
+        tooltip.style.left = `${rect.left + rect.width / 2}px`;
+        tooltip.style.top = `${rect.top - 30}px`;
+
+        // Adjust position if tooltip goes off screen
+        const tooltipRect = tooltip.getBoundingClientRect();
+        if (tooltipRect.left < 0) {
+            tooltip.style.left = '10px';
+        } else if (tooltipRect.right > window.innerWidth) {
+            tooltip.style.left = `${window.innerWidth - tooltipRect.width - 10}px`;
+        }
+
+        if (tooltipRect.top < 0) {
+            tooltip.style.top = `${rect.bottom + 10}px`;
+        }
+    }
+
+    hideTooltip() {
+        const tooltip = document.querySelector('.tooltip');
+        if (tooltip) {
+            tooltip.remove();
         }
     }
 }
