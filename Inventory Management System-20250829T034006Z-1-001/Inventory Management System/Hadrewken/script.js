@@ -1,5 +1,6 @@
-// Delegated event: close all open submenus and reset carets when clicking a major nav item
+// Consolidated DOMContentLoaded event listener for all initialization
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize sidebar navigation
     const sidebarNav = document.querySelector('.sidebar');
     if (sidebarNav) {
         sidebarNav.addEventListener('click', function(e) {
@@ -21,9 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
-// Delayed hide for notification and profile dropdowns
-document.addEventListener('DOMContentLoaded', function() {
+
+    // Initialize delayed dropdowns
     function setupDelayedDropdown(dropdownSelector, menuSelector) {
         document.querySelectorAll(dropdownSelector).forEach(function(dropdown) {
             let hideTimeout;
@@ -51,13 +51,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     setupDelayedDropdown('.notification-dropdown', '.notification-menu');
     setupDelayedDropdown('.profile-dropdown', '.profile-menu');
-});
 
-
-// Ensure all submenu carets start pointing right on page load
-document.addEventListener('DOMContentLoaded', function() {
+    // Initialize submenu carets
     document.querySelectorAll('.submenu-caret').forEach(function(caret) {
         caret.classList.add('fa-caret-right');
+    });
+
+    // Initialize role form event listener
+    const roleForm = document.getElementById('role-form');
+    if (roleForm) {
+        roleForm.addEventListener('submit', handleRoleFormSubmit);
+    }
+
+    // Initialize permissions modal event listeners
+    const permissionsModal = document.getElementById('permissions-modal');
+    if (permissionsModal) {
+        const closeBtn = permissionsModal.querySelector('.close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closePermissionsModal);
+        }
+    }
+
+    // Initialize modal close event listeners
+    window.addEventListener('click', function(event) {
+        const rolesModal = document.getElementById('roles-modal');
+        const roleFormModal = document.getElementById('role-form-modal');
+        const permissionsModal = document.getElementById('permissions-modal');
+
+        if (event.target === rolesModal) {
+            closeRolesModal();
+        }
+        if (event.target === roleFormModal) {
+            closeRoleFormModal();
+        }
+        if (event.target === permissionsModal) {
+            closePermissionsModal();
+        }
     });
 });
 // Toggle sidebar submenu caret icon
@@ -165,6 +194,18 @@ class POSSystem {
         if (searchInput) {
             searchInput.addEventListener('input', (e) => this.handleSearch(e));
         }
+
+        // Settings form
+        const settingsForm = document.getElementById('settings-form');
+        if (settingsForm) {
+            settingsForm.addEventListener('submit', (e) => this.handleSettingsSubmit(e));
+        }
+
+        // Reset settings button
+        const resetSettingsBtn = document.getElementById('reset-settings-btn');
+        if (resetSettingsBtn) {
+            resetSettingsBtn.addEventListener('click', () => this.resetSettings());
+        }
     }
 
     checkAuthentication() {
@@ -184,27 +225,210 @@ class POSSystem {
 
     async handleLogin(e) {
         e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+
+        // Clear previous error messages
         const errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.textContent = '';
+            errorMessage.style.display = 'none';
+        }
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        // Client-side validation
+        const validationError = this.validateLoginInput(username, password);
+        if (validationError) {
+            this.showLoginError(validationError);
+            return;
+        }
+
+        // Show loading state
+        this.setLoginLoading(true);
 
         try {
             const authResult = await dataManager.authenticate(username, password);
+
             if (authResult.authenticated) {
+                // Successful login
                 localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('lastLoginTime', new Date().toISOString());
                 sessionStorage.setItem('loggedInUser', authResult.user);
                 sessionStorage.setItem('userRole', authResult.role);
                 sessionStorage.setItem('employeeId', authResult.employeeId || '');
+
+                // Log successful login
+                dataManager.addAuditLog({
+                    user: authResult.user,
+                    action: 'Login',
+                    details: 'User logged into the system',
+                    type: 'login',
+                    ipAddress: this.getClientIP()
+                });
+
+                this.showToast(`Welcome back, ${authResult.user}!`, 'success');
                 window.location.href = 'dashboard.html';
             } else {
-                const errorMsg = authResult.reason || 'Invalid username or password';
-                errorMessage.textContent = errorMsg;
-                this.showToast(errorMsg, 'error');
+                // Handle specific authentication failures
+                this.handleAuthFailure(authResult.reason);
             }
         } catch (error) {
-            errorMessage.textContent = 'Authentication error occurred';
-            this.showToast('Authentication error', 'error');
+            // Handle network or system errors
+            console.error('Authentication error:', error);
+            this.handleAuthError(error);
+        } finally {
+            // Reset loading state
+            this.setLoginLoading(false);
         }
+    }
+
+    validateLoginInput(username, password) {
+        if (!username) {
+            return 'Username is required';
+        }
+
+        if (username.length < 3) {
+            return 'Username must be at least 3 characters long';
+        }
+
+        if (!password) {
+            return 'Password is required';
+        }
+
+        if (password.length < 4) {
+            return 'Password must be at least 4 characters long';
+        }
+
+        // Check for common weak passwords (basic check)
+        const weakPasswords = ['password', '123456', 'admin', '123456789'];
+        if (weakPasswords.includes(password.toLowerCase())) {
+            return 'This password is too common. Please choose a stronger password.';
+        }
+
+        return null; // No validation errors
+    }
+
+    handleAuthFailure(reason) {
+        let errorMessage = 'Login failed';
+        let toastType = 'error';
+
+        switch (reason) {
+            case 'Invalid credentials':
+                errorMessage = 'Invalid username or password. Please check your credentials and try again.';
+                break;
+            case 'Employee account is inactive':
+                errorMessage = 'Your account is currently inactive. Please contact your administrator.';
+                break;
+            case 'Employee record not found':
+                errorMessage = 'Account not found. Please verify your username or contact support.';
+                break;
+            case 'Account locked':
+                errorMessage = 'Your account has been temporarily locked due to multiple failed login attempts. Please try again later or contact support.';
+                toastType = 'warning';
+                break;
+            case 'Password expired':
+                errorMessage = 'Your password has expired. Please reset your password.';
+                break;
+            default:
+                errorMessage = reason || 'Authentication failed. Please try again.';
+        }
+
+        this.showLoginError(errorMessage);
+
+        // Log failed login attempt
+        dataManager.addAuditLog({
+            user: document.getElementById('username').value || 'Unknown',
+            action: 'Failed Login',
+            details: `Login failed: ${reason}`,
+            type: 'login',
+            ipAddress: this.getClientIP()
+        });
+
+        // Show toast with appropriate type
+        this.showToast(errorMessage, toastType);
+    }
+
+    handleAuthError(error) {
+        let errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+
+        if (error.name === 'NetworkError') {
+            errorMessage = 'Network error. Please check your internet connection.';
+        } else if (error.name === 'TimeoutError') {
+            errorMessage = 'Connection timeout. Please try again.';
+        } else if (error.message.includes('fetch')) {
+            errorMessage = 'Server is currently unavailable. Please try again later.';
+        }
+
+        this.showLoginError(errorMessage);
+        this.showToast(errorMessage, 'error');
+
+        // Log system error
+        dataManager.addAuditLog({
+            user: 'System',
+            action: 'Authentication Error',
+            details: `System error during login: ${error.message}`,
+            type: 'error',
+            ipAddress: this.getClientIP()
+        });
+    }
+
+    showLoginError(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+
+            // Add shake animation for better UX
+            errorMessage.classList.add('shake');
+            setTimeout(() => {
+                errorMessage.classList.remove('shake');
+            }, 500);
+        }
+    }
+
+    setLoginLoading(isLoading) {
+        const loginBtn = document.getElementById('loginBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        if (isLoading) {
+            if (loginBtn) {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+            }
+            if (usernameInput) usernameInput.disabled = true;
+            if (passwordInput) passwordInput.disabled = true;
+        } else {
+            if (loginBtn) {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Sign In';
+            }
+            if (usernameInput) usernameInput.disabled = false;
+            if (passwordInput) passwordInput.disabled = false;
+        }
+    }
+
+    getClientIP() {
+        // In a real application, this would be obtained from the server
+        // For demo purposes, we'll use a placeholder
+        return '192.168.1.100';
+    }
+
+    checkSessionTimeout() {
+        const lastLoginTime = localStorage.getItem('lastLoginTime');
+        if (lastLoginTime) {
+            const loginTime = new Date(lastLoginTime);
+            const now = new Date();
+            const sessionDuration = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
+
+            if (now - loginTime > sessionDuration) {
+                // Session expired
+                this.logout();
+                this.showToast('Your session has expired. Please log in again.', 'warning');
+                return true;
+            }
+        }
+        return false;
     }
 
     logout() {
@@ -257,6 +481,9 @@ class POSSystem {
                 break;
             case 'inventory-reports':
                 this.loadInventoryReports();
+                break;
+            case 'settings':
+                this.loadSettings();
                 break;
         }
     }
@@ -675,6 +902,113 @@ class POSSystem {
 
         this.showToast('Inventory reports loaded successfully!', 'success');
     }
+
+    loadSettings() {
+        // Load settings from dataManager
+        const settings = dataManager.getSettings();
+
+        // Populate basic settings
+        document.getElementById('business-name').value = settings.businessName || '';
+        document.getElementById('store-address').value = settings.storeAddress || '';
+        document.getElementById('store-phone').value = settings.storePhone || '';
+        document.getElementById('store-email').value = settings.storeEmail || '';
+        document.getElementById('currency-symbol').value = settings.currencySymbol || '$';
+        document.getElementById('tax-rate').value = settings.taxRate || 0;
+        document.getElementById('store-hours').value = settings.storeHours || '';
+        document.getElementById('loyalty-program').value = settings.loyaltyProgram || 'enabled';
+
+        // Populate inventory settings
+        document.getElementById('low-stock-threshold').value = settings.lowStockThreshold || 10;
+        document.getElementById('default-reorder-point').value = settings.defaultReorderPoint || 5;
+        document.getElementById('auto-reorder').value = settings.autoReorder || 'true';
+        document.getElementById('barcode-scanning').value = settings.barcodeScanning || 'true';
+        document.getElementById('inventory-categories').value = settings.inventoryCategories || 'Fruits & Vegetables\nDairy & Eggs\nMeat & Poultry\nBakery\nBeverages\nSnacks\nFrozen Foods\nHousehold';
+
+        // Populate advanced settings
+        document.getElementById('debug-mode').value = settings.debugMode || 'false';
+        document.getElementById('performance-monitoring').value = settings.performanceMonitoring || 'false';
+        document.getElementById('database-optimization').value = settings.databaseOptimization || 'auto';
+        document.getElementById('maintenance-schedule').value = settings.maintenanceSchedule || 'weekly';
+        document.getElementById('workflow-automation').value = settings.workflowAutomation || 'false';
+
+        this.showToast('Settings loaded successfully!', 'success');
+    }
+
+    handleSettingsSubmit(e) {
+        e.preventDefault();
+
+        // Get form data
+        const formData = new FormData(e.target);
+        const settings = {
+            // Store information
+            businessName: formData.get('businessName'),
+            storeAddress: formData.get('storeAddress'),
+            storePhone: formData.get('storePhone'),
+            storeEmail: formData.get('storeEmail'),
+            currencySymbol: formData.get('currencySymbol'),
+            taxRate: parseFloat(formData.get('taxRate')) || 0,
+            storeHours: formData.get('storeHours'),
+            loyaltyProgram: formData.get('loyaltyProgram'),
+
+            // Inventory settings
+            lowStockThreshold: parseInt(formData.get('lowStockThreshold')) || 10,
+            defaultReorderPoint: parseInt(formData.get('defaultReorderPoint')) || 5,
+            autoReorder: formData.get('autoReorder'),
+            barcodeScanning: formData.get('barcodeScanning'),
+            inventoryCategories: formData.get('inventoryCategories'),
+
+            // Advanced settings
+            debugMode: formData.get('debugMode'),
+            performanceMonitoring: formData.get('performanceMonitoring'),
+            databaseOptimization: formData.get('databaseOptimization'),
+            maintenanceSchedule: formData.get('maintenanceSchedule'),
+            workflowAutomation: formData.get('workflowAutomation')
+        };
+
+        // Save settings
+        const success = dataManager.saveSettings(settings);
+        if (success) {
+            this.showToast('Settings saved successfully!', 'success');
+            // Reload dashboard to reflect changes
+            this.loadDashboard();
+        } else {
+            this.showToast('Error saving settings', 'error');
+        }
+    }
+
+    resetSettings() {
+        if (confirm('Are you sure you want to reset all settings to defaults?')) {
+            dataManager.resetSettings();
+            this.loadSettings();
+            this.showToast('Settings reset to defaults!', 'success');
+        }
+    }
+
+    showSettingsTab(tabName) {
+        // Hide all settings tabs
+        const tabs = document.querySelectorAll('.settings-tab');
+        tabs.forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Remove active class from all tab buttons
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        tabButtons.forEach(button => {
+            button.classList.remove('active');
+        });
+
+        // Show selected tab
+        const selectedTab = document.getElementById(`${tabName}-tab`);
+        if (selectedTab) {
+            selectedTab.classList.add('active');
+        }
+
+        // Add active class to clicked button
+        const activeButton = document.querySelector(`.tab-btn[onclick="showSettingsTab('${tabName}')"]`);
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+    }
 }
 
 // Initialize the system
@@ -768,6 +1102,11 @@ function closeRolesModal() {
     const modal = document.getElementById('roles-modal');
     if (modal) {
         modal.style.display = 'none';
+        // Clear any form data if needed
+        const form = document.getElementById('role-form');
+        if (form) {
+            form.reset();
+        }
     }
 }
 
@@ -921,6 +1260,27 @@ function closePermissionsModal() {
     }
 }
 
+// Close employee modal
+function closeEmployeeModal() {
+    const modal = document.getElementById('employee-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        // Clear any form data if needed
+        const form = document.getElementById('employee-form');
+        if (form) {
+            form.reset();
+        }
+    }
+}
+
+// Close employee form modal
+function closeEmployeeFormModal() {
+    const modal = document.getElementById('employee-form-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
 // Load permissions data
 function loadPermissions() {
     const permissionsList = document.getElementById('permissions-list');
@@ -1000,21 +1360,6 @@ function savePermissions() {
         posSystem.showToast('Error updating some permissions', 'error');
     }
 }
-
-// Initialize permissions modal event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    const permissionsModal = document.getElementById('permissions-modal');
-    if (permissionsModal) {
-        permissionsModal.querySelector('.close').addEventListener('click', closePermissionsModal);
-    }
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target === permissionsModal) {
-            closePermissionsModal();
-        }
-    });
-});
 
 // Audit logs functions
 function loadAuditLogs() {
@@ -1105,257 +1450,4 @@ function exportAuditLogs() {
     posSystem.showToast('Audit logs exported successfully!', 'success');
 }
 
-// Initialize role form event listener
-document.addEventListener('DOMContentLoaded', function() {
-    const roleForm = document.getElementById('role-form');
-    if (roleForm) {
-        roleForm.addEventListener('submit', handleRoleFormSubmit);
-    }
 
-    // Close modals when clicking outside
-    window.addEventListener('click', function(event) {
-        const rolesModal = document.getElementById('roles-modal');
-        const roleFormModal = document.getElementById('role-form-modal');
-
-        if (event.target === rolesModal) {
-            closeRolesModal();
-        }
-        if (event.target === roleFormModal) {
-            closeRoleFormModal();
-        }
-    });
-});
-
-// Employee management functions
-function addEmployee() {
-    showAddEmployeeForm();
-}
-
-function manageEmployees() {
-    const modal = document.getElementById('employee-modal');
-    if (modal) {
-        modal.style.display = 'block';
-        loadEmployees();
-    }
-}
-
-function closeEmployeeModal() {
-    const modal = document.getElementById('employee-modal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-function showAddEmployeeForm() {
-    const formModal = document.getElementById('employee-form-modal');
-    const formTitle = document.getElementById('employee-form-title');
-    const form = document.getElementById('employee-form');
-
-    if (formModal && formTitle && form) {
-        formTitle.textContent = 'Add Employee';
-        form.reset();
-        form.removeAttribute('data-editing-id');
-        formModal.style.display = 'block';
-    }
-}
-
-function closeEmployeeFormModal() {
-    const modal = document.getElementById('employee-form-modal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-function loadEmployees() {
-    const employees = dataManager.getEmployees();
-    const employeesList = document.getElementById('employees-list');
-
-    if (employeesList) {
-        employeesList.innerHTML = employees.length > 0
-            ? employees.map(employee => `
-                <div class="employee-item">
-                    <div class="employee-info">
-                        <h3>${employee.name}</h3>
-                        <p><strong>Email:</strong> ${employee.email}</p>
-            <p><strong>Role:</strong> ${employee.role}</p>
-            <p><strong>Status:</strong> <span class="status-${employee.status.toLowerCase()}">${employee.status}</span></p>
-            <p><strong>Hire Date:</strong> ${posSystem.formatDate(employee.hireDate)}</p>
-                    </div>
-                    <div class="employee-actions">
-                        <button class="btn btn-edit" onclick="editEmployee(${employee.id})">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-delete" onclick="deleteEmployee(${employee.id})">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                </div>
-            `).join('')
-            : '<p>No employees found. Click "Add New Employee" to create your first employee record.</p>';
-    }
-}
-
-function editEmployee(id) {
-    const employees = dataManager.getEmployees();
-    const employee = employees.find(e => e.id === id);
-
-    if (employee) {
-        const formModal = document.getElementById('employee-form-modal');
-        const formTitle = document.getElementById('employee-form-title');
-        const form = document.getElementById('employee-form');
-
-        if (formModal && formTitle && form) {
-            formTitle.textContent = 'Edit Employee';
-            form.setAttribute('data-editing-id', id);
-
-            // Populate form fields in arranged order
-            document.getElementById('employee-name').value = employee.name;
-            document.getElementById('employee-email').value = employee.email;
-            document.getElementById('employee-phone').value = employee.phone;
-            document.getElementById('employee-role').value = employee.role;
-            document.getElementById('employee-status').value = employee.status;
-
-            // Adjust color of status field based on status value
-            const statusField = document.getElementById('employee-status');
-            if (statusField) {
-                switch (employee.status.toLowerCase()) {
-                    case 'active':
-                        statusField.style.color = 'green';
-                        break;
-                    case 'inactive':
-                        statusField.style.color = 'red';
-                        break;
-                    case 'on leave':
-                        statusField.style.color = 'orange';
-                        break;
-                    default:
-                        statusField.style.color = 'black';
-                }
-            }
-
-            formModal.style.display = 'block';
-        }
-    }
-}
-
-function deleteEmployee(id) {
-    const employees = dataManager.getEmployees();
-    const employee = employees.find(e => e.id === id);
-
-    if (employee && confirm(`Are you sure you want to delete the employee "${employee.name}"?`)) {
-        const success = dataManager.deleteEmployee(id);
-        if (success) {
-            posSystem.showToast('Employee deleted successfully!', 'success');
-            loadEmployees();
-        } else {
-            posSystem.showToast('Error deleting employee', 'error');
-        }
-    }
-}
-
-function handleEmployeeFormSubmit(e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const editingId = form.getAttribute('data-editing-id');
-
-    // Get form values
-    const name = document.getElementById('employee-name').value.trim();
-    const email = document.getElementById('employee-email').value.trim();
-    const role = document.getElementById('employee-role').value;
-    const phone = document.getElementById('employee-phone').value.trim();
-    const status = document.getElementById('employee-status').value;
-
-    // Validation
-    if (!name) {
-        posSystem.showToast('Employee name is required', 'error');
-        return;
-    }
-
-    if (!email) {
-        posSystem.showToast('Email is required', 'error');
-        return;
-    }
-
-    if (!role) {
-        posSystem.showToast('Role is required', 'error');
-        return;
-    }
-
-    if (!phone) {
-        posSystem.showToast('Phone number is required', 'error');
-        return;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        posSystem.showToast('Please enter a valid email address', 'error');
-        return;
-    }
-
-    const employeeData = { name, email, role, phone, status };
-
-    try {
-        if (editingId) {
-            // Update existing employee
-            const success = dataManager.updateEmployee(parseInt(editingId), employeeData);
-            if (success) {
-                posSystem.showToast('Employee updated successfully!', 'success');
-            } else {
-                posSystem.showToast('Error updating employee', 'error');
-                return;
-            }
-        } else {
-            // Add new employee
-            dataManager.addEmployee(employeeData);
-            posSystem.showToast('Employee added successfully!', 'success');
-        }
-
-        closeEmployeeFormModal();
-        loadEmployees();
-    } catch (error) {
-        posSystem.showToast('Error saving employee', 'error');
-    }
-}
-
-// Initialize employee form event listener
-document.addEventListener('DOMContentLoaded', function() {
-    const employeeForm = document.getElementById('employee-form');
-    if (employeeForm) {
-        employeeForm.addEventListener('submit', handleEmployeeFormSubmit);
-    }
-
-    // Close employee modals when clicking outside
-    window.addEventListener('click', function(event) {
-        const employeeModal = document.getElementById('employee-modal');
-        const employeeFormModal = document.getElementById('employee-form-modal');
-
-        if (event.target === employeeModal) {
-            closeEmployeeModal();
-        }
-        if (event.target === employeeFormModal) {
-            closeEmployeeFormModal();
-        }
-    });
-
-    // --- Restore sidebar submenu caret toggle ---
-    document.querySelectorAll('.has-subzmenu').forEach(function(menu) {
-        menu.addEventListener('click', function(e) {
-            // Only to  ggle if clicking the menu itself, not a submenu item
-            if (e.target.closest('.submenu-item')) return;
-            // Close other open submenus (optional, comment out if not needed)
-            document.querySelectorAll('.has-submenu.open').forEach(function(openMenu) {
-                if (openMenu !== menu) {
-                    openMenu.classList.remove('open');
-                    var openSub = openMenu.querySelector('.sidebar-submenu');
-                    if (openSub) openSub.classList.remove('open');
-                }
-            });
-            // Toggle open class on this menu and its submenu
-            menu.classList.toggle('open');
-            var submenu = menu.querySelector('.sidebar-submenu');
-            if (submenu) submenu.classList.toggle('open');
-        });
-    });
-});
