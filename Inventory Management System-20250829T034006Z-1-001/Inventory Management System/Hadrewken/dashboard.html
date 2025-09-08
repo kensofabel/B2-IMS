@@ -420,18 +420,82 @@
 
                         <div id="general-tab" class="settings-tab active">
                             <div class="settings-overview">
-                                <h3><i class="fas fa-cog"></i> General Settings</h3>
-                                <p class="settings-description">Configure your business information, preferences, and system settings</p>
+                                <div class="settings-header">
+                                    <div class="settings-title-section">
+                                        <h3><i class="fas fa-cog"></i> General Settings</h3>
+                                        <p class="settings-description">Configure your business information, preferences, and system settings</p>
+                                    </div>
+                                    <div class="settings-actions">
+                                        <div class="settings-search">
+                                            <input type="text" id="settings-search" placeholder="Search settings..." oninput="filterSettings(this.value)">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <div class="quick-actions">
+                                            <button class="quick-action-btn" onclick="expandAllCards()" title="Expand All">
+                                                <i class="fas fa-expand-arrows-alt"></i>
+                                            </button>
+                                            <button class="quick-action-btn" onclick="collapseAllCards()" title="Collapse All">
+                                                <i class="fas fa-compress-arrows-alt"></i>
+                                            </button>
+                                            <button class="quick-action-btn" onclick="showSettingsHelp()" title="Help">
+                                                <i class="fas fa-question-circle"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="settings-status">
-                                    <span class="status-indicator" id="settings-status">
-                                        <i class="fas fa-circle"></i> Settings loaded
-                                    </span>
+                                    <div class="status-indicators">
+                                        <span class="status-indicator" id="settings-status">
+                                            <i class="fas fa-circle"></i> Settings loaded
+                                        </span>
+                                        <span class="completion-indicator" id="settings-completion">
+                                            <i class="fas fa-chart-pie"></i> <span id="completion-percent">0%</span> Complete
+                                        </span>
+                                    </div>
                                     <div class="auto-save-toggle">
                                         <label class="toggle-switch">
                                             <input type="checkbox" id="auto-save-toggle" checked>
                                             <span class="toggle-slider"></span>
                                         </label>
                                         <span class="toggle-label">Auto-save</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Settings Summary Card -->
+                            <div class="settings-summary-card">
+                                <div class="summary-header">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <h4>Settings Overview</h4>
+                                </div>
+                                <div class="summary-content">
+                                    <div class="summary-item">
+                                        <span class="summary-label">Business Info</span>
+                                        <div class="summary-progress">
+                                            <div class="progress-bar" id="business-progress" style="width: 0%"></div>
+                                        </div>
+                                        <span class="summary-value" id="business-complete">0/4</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Financial</span>
+                                        <div class="summary-progress">
+                                            <div class="progress-bar" id="financial-progress" style="width: 0%"></div>
+                                        </div>
+                                        <span class="summary-value" id="financial-complete">0/3</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">System</span>
+                                        <div class="summary-progress">
+                                            <div class="progress-bar" id="system-progress" style="width: 0%"></div>
+                                        </div>
+                                        <span class="summary-value" id="system-complete">0/4</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Notifications</span>
+                                        <div class="summary-progress">
+                                            <div class="progress-bar" id="notification-progress" style="width: 0%"></div>
+                                        </div>
+                                        <span class="summary-value" id="notification-complete">0/3</span>
                                     </div>
                                 </div>
                             </div>
