@@ -326,12 +326,18 @@ class DataManager {
         }
         if (!localStorage.getItem('settings')) {
             const defaultSettings = {
-                lowStockThreshold: 10,
-                currencySymbol: '$',
-                taxRate: 0.08,
                 businessName: 'My Business',
+                currencySymbol: '$',
+                taxRate: 8,
+                lowStockThreshold: 10,
                 discounts: 0,
-                paymentTypes: ['Cash', 'Card', 'Credit']
+                paymentTypes: 'Cash, Card, Credit',
+                debugMode: 'false',
+                performanceMonitoring: 'false',
+                databaseOptimization: 'auto',
+                maintenanceSchedule: 'weekly',
+                customFields: {"product": [], "customer": []},
+                workflowAutomation: 'false'
             };
             localStorage.setItem('settings', JSON.stringify(defaultSettings));
         }
@@ -603,6 +609,32 @@ class DataManager {
         localStorage.setItem('settings', JSON.stringify(newSettings));
         this.addActivity('Settings updated');
         return true;
+    }
+
+    resetSettings() {
+        const defaultSettings = {
+            businessName: 'My Business',
+            currencySymbol: '$',
+            taxRate: 8,
+            lowStockThreshold: 10,
+            discounts: 0,
+            paymentTypes: 'Cash, Card, Credit',
+            debugMode: 'false',
+            performanceMonitoring: 'false',
+            databaseOptimization: 'auto',
+            maintenanceSchedule: 'weekly',
+            customFields: {"product": [], "customer": []},
+            workflowAutomation: 'false'
+        };
+        localStorage.setItem('settings', JSON.stringify(defaultSettings));
+        this.addActivity('Settings reset to defaults');
+        return defaultSettings;
+    }
+
+    clearSettings() {
+        localStorage.setItem('settings', JSON.stringify({}));
+        this.addActivity('All settings content cleared');
+        return {};
     }
 
     // Authentication with employee status check
