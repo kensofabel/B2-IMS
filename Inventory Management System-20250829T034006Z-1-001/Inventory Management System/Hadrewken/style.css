@@ -94,21 +94,15 @@
 }
 /* Sidebar submenu styles */
 .sidebar-submenu {
-    max-height: 0;
-    overflow: hidden;
+    display: none;
     flex-direction: column;
     background: transparent;
-    opacity: 0;
-    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
     padding-left:53px !important;
 }
 .sidebar-submenu.open {
     position: relative;
-    display: flex;
+    display: block;
     gap: 0;
-    max-height: 500px;
-    opacity: 1;
-    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
 }
 
 .sidebar-submenu.open::before {
@@ -367,7 +361,7 @@ body::before {
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
+    overflow-y: auto;
     animation: slideUpFadeIn 0.6s ease-out 0.7s both;
 }
 
@@ -573,6 +567,46 @@ body::before {
     z-index: 1000;
     box-shadow: 2px 0 8px rgba(0,0,0,0.08);
 }
+    /* Minimal transparent sidebar scrollbar */
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+        background: transparent;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(120,120,120,0.3);
+        border-radius: 3px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(120,120,120,0.3) transparent;
+    }
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 170px); /* Leaves space for bottom navs */
+}
+
+.sidebar-bottom {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2;
+    padding: 0 10px;
+    background: transparent;
+}
 
 
 .sidebar-nav {
@@ -584,7 +618,7 @@ body::before {
 }
 
 .sidebar .nav-item:last-child {
-    margin-bottom: 120px; /* Adds space below the last nav item */
+    margin-bottom: 0;
 }
 
 
@@ -1456,6 +1490,13 @@ body::before {
         width: 90px !important;
         transition: left 0.3s ease;
     }
+    .sidebar-nav {
+        max-height: calc(100vh - 120px);
+    }
+    .sidebar-submenu.open {
+        max-height: 200px;
+        min-height: 60px;
+    }
     .content-area {
         margin-top: 70px !important;
         margin-left: 100px !important;
@@ -1471,5 +1512,12 @@ body::before {
     }
     .sidebar {
         top: 65px !important;
+    }
+    .sidebar-nav {
+        max-height: calc(100vh - 100px);
+    }
+    .sidebar-submenu.open {
+        max-height: 120px;
+        min-height: 40px;
     }
 }
