@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
         <!-- Header -->
         <header class="dashboard-header">
             <div class="header-left">
-                <img class="dashboard-logo" src="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/Untitled_design__1_-removebg-preview.png?raw=true" alt="Dashboard Logo" style="height:40px; width:auto; object-fit:contain;">
+                <img class="dashboard-logo" src="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/Untitled_design__1_-removebg-preview.png?raw=true" alt="Black Basket" style="height:40px; width:auto; object-fit:contain;">
             </div>
             <div class="header-search">
                 <form id="dashboard-search-form" onsubmit="event.preventDefault(); /* Add search logic here */">
@@ -43,7 +43,9 @@
         <!-- Main Content -->
         <main class="dashboard-main">
             <!-- Sidebar -->
+            <button class="sidebar-toggle-btn" id="sidebarToggle">&#9776;</button>
             <aside class="sidebar" id="sidebar">
+                <img src="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/Untitled_design__1_-removebg-preview.png?raw=true" alt="Black Basket" class="sidebar-logo" />
                 <nav class="sidebar-nav">
                     <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
                         <i class="fas fa-chart-line"></i> Dashboard
@@ -291,6 +293,24 @@
                     <div class="section-header">
                         <h2>Inventory Reports</h2>
                     </div>
+                    <div class="report-summary">
+                        <div class="summary-card">
+                            <h3 id="total-inventory-value">$0.00</h3>
+                            <p>Total Inventory Value</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="total-inventory-items">0</h3>
+                            <p>Total Items</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="low-stock-count">0</h3>
+                            <p>Low Stock Items</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="out-of-stock-count">0</h3>
+                            <p>Out of Stock Items</p>
+                        </div>
+                    </div>
                     <div class="report-content">
                         <div class="inventory-report-table-container">
                             <table class="inventory-report-table">
@@ -315,10 +335,47 @@
                 <section id="payment-reports-section" class="section">
                     <div class="section-header">
                         <h2>Payment Reports</h2>
+                        <div class="report-filters">
+                            <input type="date" id="payment-report-start-date">
+                            <input type="date" id="payment-report-end-date">
+                            <button class="btn btn-primary" onclick="generatePaymentReport()">
+                                <i class="fas fa-chart-line"></i> Generate Report
+                            </button>
+                        </div>
                     </div>
-                    <div class="report-content">
-                        <p>Payment reports content will be displayed here.</p>
-                        <!-- Add payment reports specific content -->
+                    <div class="report-summary">
+                        <div class="summary-card">
+                            <h3 id="total-payment-transactions">0</h3>
+                            <p>Total Transactions</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="total-payment-revenue">$0.00</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="cash-payments">0</h3>
+                            <p>Cash Payments</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3 id="card-payments">0</h3>
+                            <p>Card Payments</p>
+                        </div>
+                    </div>
+                    <div class="payment-report-table-container">
+                        <table class="payment-report-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Date & Time</th>
+                                    <th>Payment Method</th>
+                                    <th>Amount</th>
+                                    <th>Products</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payment-report-table-body">
+                                <!-- Payment report data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
