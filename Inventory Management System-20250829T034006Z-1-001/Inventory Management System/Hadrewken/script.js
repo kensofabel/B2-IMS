@@ -1709,4 +1709,21 @@
         posSystem.showToast('Audit logs exported successfully!', 'success');
     }
 
+// Toggle sidebar collapse/expand
+document.getElementById('sidebarToggle').onclick = function() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+};
 
+document.addEventListener('click', function(event) {
+  const sidebar = document.getElementById('sidebar');x``
+  const toggleBtn = document.getElementById('sidebarToggle');
+  // Only run on mobile/tablet
+  if (window.innerWidth <= 900) {
+    // If sidebar is open and click is outside sidebar and toggle button
+    if (!sidebar.classList.contains('collapsed') &&
+        !sidebar.contains(event.target) &&
+        event.target !== toggleBtn) {
+      sidebar.classList.add('collapsed');
+    }
+  }
+});
