@@ -14,7 +14,8 @@
     <div class="dashboard-container">
         <!-- Header -->
         <header class="dashboard-header">
-            <div class="header-left">
+            <div class="header-left" style="display: flex; align-items: center;">
+                <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle sidebar">&#9776;</button>
                 <img class="dashboard-logo" src="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/Untitled_design__1_-removebg-preview.png?raw=true" alt="Black Basket" style="height:40px; width:auto; object-fit:contain;">
             </div>
             <div class="header-search">
@@ -43,8 +44,8 @@
         <!-- Main Content -->
         <main class="dashboard-main">
             <!-- Sidebar -->
-            <button class="sidebar-toggle-btn" id="sidebarToggle">&#9776;</button>
             <aside class="sidebar" id="sidebar">
+                <!-- Sidebar toggle button moved to header -->
                 <img src="https://github.com/kensofabel/B2-IMS/blob/main/Inventory%20Management%20System-20250829T034006Z-1-001/Inventory%20Management%20System/Untitled_design__1_-removebg-preview.png?raw=true" alt="Black Basket" class="sidebar-logo" />
                 <nav class="sidebar-nav">
                     <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
