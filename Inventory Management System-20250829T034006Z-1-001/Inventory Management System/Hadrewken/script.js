@@ -1,4 +1,4 @@
-    // Consolidated DOMContentLoaded event listener for all initialization
+// Consolidated DOMContentLoaded event listener for all initialization
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize sidebar navigation
         const sidebarNav = document.querySelector('.sidebar');
@@ -88,6 +88,88 @@
                 closePermissionsModal();
             }
         });
+
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        let toggleBtnTimeout;
+        function openSidebar() {
+            sidebar.classList.add('open');
+            document.body.classList.add('sidebar-open');
+            sidebarToggle.classList.add('hide-toggle-btn');
+            if (toggleBtnTimeout) clearTimeout(toggleBtnTimeout);
+            localStorage.setItem('sidebarState', 'open');
+        }
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            document.body.classList.remove('sidebar-open');
+            if (toggleBtnTimeout) clearTimeout(toggleBtnTimeout);
+            toggleBtnTimeout = setTimeout(function() {
+                sidebarToggle.classList.remove('hide-toggle-btn');
+            }, 300); // 300ms delay
+            localStorage.setItem('sidebarState', 'closed');
+        }
+        sidebarToggle.addEventListener('click', function() {
+            if (window.innerWidth <= 1200) {
+                if (!sidebar.classList.contains('open')) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
+            }
+        });
+        document.addEventListener('mousedown', function(e) {
+            if (window.innerWidth <= 1200 && sidebar.classList.contains('open')) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+        // Restore sidebar state on load
+        function restoreSidebarState() {
+            const state = localStorage.getItem('sidebarState');
+            if (state === 'open') {
+                openSidebar();
+            } else {
+                closeSidebar();
+            }
+        }
+        restoreSidebarState();
+        // Restore sidebar state on resize
+        window.addEventListener('resize', function() {
+            restoreSidebarState();
+        });
+        // Close sidebar when clicking outside
+        document.addEventListener('mousedown', function(e) {
+            if (window.innerWidth <= 1200 && sidebar.classList.contains('open')) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+
+        // Header search expand/collapse logic
+        const headerSearch = document.querySelector('.header-search');
+        const searchForm = headerSearch ? headerSearch.querySelector('form') : null;
+        const searchInput = searchForm ? searchForm.querySelector('input[type="text"]') : null;
+        const searchBtn = searchForm ? searchForm.querySelector('button') : null;
+
+        if (searchBtn && headerSearch) {
+            searchBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                headerSearch.classList.toggle('expanded');
+                if (headerSearch.classList.contains('expanded')) {
+                    searchInput && searchInput.focus();
+                }
+            });
+
+            document.addEventListener('mousedown', function(e) {
+                if (headerSearch.classList.contains('expanded')) {
+                    if (!headerSearch.contains(e.target)) {
+                        headerSearch.classList.remove('expanded');
+                    }
+                }
+            });
+        }
     });
     // Toggle sidebar submenu caret icon
     function toggleSidebarSubmenu(event, submenuId) {
@@ -1718,7 +1800,7 @@ document.addEventListener('click', function(event) {
   const sidebar = document.getElementById('sidebar');x``
   const toggleBtn = document.getElementById('sidebarToggle');
   // Only run on mobile/tablet
-  if (window.innerWidth <= 900) {
+  if (window.innerWidth <= 1200) {
     // If sidebar is open and click is outside sidebar and toggle button
     if (!sidebar.classList.contains('collapsed') &&
         !sidebar.contains(event.target) &&
