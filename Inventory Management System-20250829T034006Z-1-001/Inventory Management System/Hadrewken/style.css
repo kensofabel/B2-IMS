@@ -43,6 +43,7 @@
 .header-search button:hover {
     color: #fff;
 }
+
 /* Notification and Profile Dropdowns in Header */
 .header-right {
     display: flex;
@@ -50,19 +51,19 @@
     gap: 20px;
     position: relative;
 }
-.notification-dropdown, .profile-item {
+.notification-dropdown, .profile-dropdown {
     position: relative;
     cursor: pointer;
 }
-.notification-dropdown i, .profile-item i {
+.notification-dropdown i, .profile-dropdown i {
     font-size: 22px;
     color: #dbdbdb;
     transition: color 0.2s;
 }
-.notification-dropdown:hover i, .profile-item:hover i {
+.notification-dropdown:hover i, .profile-dropdown:hover i {
     color: #ff9800;
 }
-.notification-menu{
+.notification-menu, .profile-menu {
     display: none;
     position: absolute;
     top: 120%;
@@ -75,19 +76,22 @@
     padding: 8px 0;
 }
 .notification-dropdown:hover .notification-menu,
-.profile-item:hover .profile-item:hover {
+.profile-dropdown:hover .profile-menu {
     display: block;
 }
-.notification-item {
+.notification-item, .profile-item {
     padding: 10px 20px;
     color: #dbdbdb;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     white-space: nowrap;
 }
-.notification-item:hover {
+.notification-item:hover, .profile-item:hover {
     background: #ff9800;
     color: #232323;
+}
+.profile-item i {
+    margin-right: 8px;
 }
 
 /* Sidebar submenu styles */
